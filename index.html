@@ -18,15 +18,104 @@
     }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #fdfdfd;
-      color: #333;
       line-height: 1.6;
       overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
+    
+    /* Light theme */
+    body.light-theme {
+      background-color: #fdfdfd;
+      color: #333;
+    }
+    
+    /* Dark theme */
+    body.dark-theme {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    
     a {
       text-decoration: none;
       color: inherit;
     }
+    
+    /* Theme-based colors */
+    .bg-primary {
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+    }
+    
+    .bg-secondary {
+      background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+    }
+    
+    .bg-tertiary {
+      background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+    }
+    
+    .text-primary {
+      color: #fff;
+    }
+    
+    .text-secondary {
+      color: #ccc;
+    }
+    
+    .text-accent {
+      color: #4d94ff;
+    }
+    
+    .card-bg {
+      background: #fff;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark-theme .card-bg {
+      background: #1e1e1e;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .dark-theme .feature-icon {
+      color: #4d94ff;
+      background: rgba(77, 148, 255, 0.1);
+    }
+    
+    .dark-theme .section-title {
+      color: #e0e0e0;
+    }
+    
+    .dark-theme .feature h3,
+    .dark-theme .details .copy h2,
+    .dark-theme .spec-card h3,
+    .dark-theme .spec-card ul li span:first-child {
+      color: #e0e0e0;
+    }
+    
+    .dark-theme .feature p,
+    .dark-theme .details .copy p,
+    .dark-theme .spec-card ul li span:last-child {
+      color: #aaaaaa;
+    }
+    
+    .dark-theme .spec-card {
+      background: #252525;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .dark-theme .spec-card ul li {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .dark-theme .social-links a {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ccc;
+    }
+    
+    .dark-theme .social-links a:hover {
+      background: #4d94ff;
+      color: white;
+    }
+    
     /* Header */
     header {
       background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
@@ -38,15 +127,18 @@
       z-index: 999;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
+    
     header h1 {
       font-size: 2.2rem;
       margin-bottom: 8px;
       letter-spacing: 1px;
     }
+    
     header p {
       font-size: 1rem;
       opacity: 0.8;
     }
+    
     /* Navigation */
     nav {
       display: flex;
@@ -54,6 +146,7 @@
       gap: 30px;
       margin-top: 15px;
     }
+    
     nav a {
       color: #ccc;
       font-weight: 500;
@@ -61,9 +154,11 @@
       position: relative;
       padding: 5px 0;
     }
+    
     nav a:hover {
       color: #4d94ff;
     }
+    
     nav a::after {
       content: '';
       position: absolute;
@@ -74,9 +169,11 @@
       background: #4d94ff;
       transition: width 0.3s ease;
     }
+    
     nav a:hover::after {
       width: 100%;
     }
+    
     /* Hero Section */
     .hero {
       text-align: center;
@@ -85,6 +182,11 @@
       position: relative;
       overflow: hidden;
     }
+    
+    .dark-theme .hero {
+      background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+    }
+    
     .hero::before {
       content: '';
       position: absolute;
@@ -95,12 +197,14 @@
       background: radial-gradient(circle, rgba(77,148,255,0.1) 0%, transparent 70%);
       z-index: 0;
     }
+    
     .hero-content {
       position: relative;
       z-index: 1;
       max-width: 800px;
       margin: 0 auto;
     }
+    
     .hero img {
       max-width: 500px;
       width: 100%;
@@ -110,15 +214,26 @@
       margin-bottom: 30px;
       transition: transform 0.3s ease;
     }
+    
+    .dark-theme .hero img {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
     .hero img:hover {
       transform: translateY(-5px);
     }
+    
     .hero h1 {
       font-size: 3rem;
       margin: 30px 0 15px;
       color: #111;
       font-weight: 700;
     }
+    
+    .dark-theme .hero h1 {
+      color: #e0e0e0;
+    }
+    
     .hero p {
       font-size: 1.25rem;
       color: #555;
@@ -126,6 +241,11 @@
       margin: 0 auto 35px;
       line-height: 1.7;
     }
+    
+    .dark-theme .hero p {
+      color: #aaaaaa;
+    }
+    
     /* Features Section */
     section.features {
       display: grid;
@@ -135,6 +255,7 @@
       max-width: 1300px;
       margin: auto;
     }
+    
     .feature {
       background: #fff;
       border-radius: 16px;
@@ -144,10 +265,22 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       border: 1px solid rgba(0, 0, 0, 0.03);
     }
+    
+    .dark-theme .feature {
+      background: #1e1e1e;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
     .feature:hover {
       transform: translateY(-10px);
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
     }
+    
+    .dark-theme .feature:hover {
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+    
     .feature-icon {
       font-size: 3rem;
       margin-bottom: 20px;
@@ -161,21 +294,29 @@
       background: rgba(0, 119, 255, 0.1);
       border-radius: 50%;
     }
+    
     .feature h3 {
       font-size: 1.5rem;
       margin-bottom: 15px;
       color: #222;
     }
+    
     .feature p {
       font-size: 1.05rem;
       color: #666;
       line-height: 1.7;
     }
+    
     /* Details Section */
     .details {
       background: linear-gradient(135deg, #eef3f8 0%, #dde7f5 100%);
       padding: 100px 20px;
     }
+    
+    .dark-theme .details {
+      background: linear-gradient(135deg, #1a1a1a 0%, #252525 100%);
+    }
+    
     .section-title {
       text-align: center;
       font-size: 2.2rem;
@@ -183,6 +324,11 @@
       color: #111;
       position: relative;
     }
+    
+    .dark-theme .section-title {
+      color: #e0e0e0;
+    }
+    
     .section-title::after {
       content: '';
       position: absolute;
@@ -194,6 +340,7 @@
       background: #0077ff;
       border-radius: 2px;
     }
+    
     .details .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -202,6 +349,7 @@
       margin: auto;
       align-items: center;
     }
+    
     .details .grid img {
       width: 100%;
       border-radius: 16px;
@@ -209,24 +357,41 @@
       border: 1px solid rgba(0, 0, 0, 0.05);
       transition: transform 0.3s ease;
     }
+    
+    .dark-theme .details .grid img {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+    
     .details .grid img:hover {
       transform: scale(1.02);
     }
+    
     .details .copy h2 {
       font-size: 2rem;
       margin-bottom: 25px;
       color: #111;
     }
+    
+    .dark-theme .details .copy h2 {
+      color: #e0e0e0;
+    }
+    
     .details .copy p {
       font-size: 1.1rem;
       color: #444;
       line-height: 1.8;
       margin-bottom: 30px;
     }
+    
+    .dark-theme .details .copy p {
+      color: #aaaaaa;
+    }
+    
     .details .copy ul {
       list-style: none;
       margin-top: 30px;
     }
+    
     .details .copy ul li {
       margin-bottom: 20px;
       padding-left: 30px;
@@ -234,6 +399,7 @@
       font-size: 1.05rem;
       line-height: 1.7;
     }
+    
     .details .copy ul li:before {
       content: '\f00c';
       font-family: 'Font Awesome 6 Free';
@@ -244,11 +410,21 @@
       font-size: 1.2rem;
       top: 3px;
     }
+    
+    .dark-theme .details .copy ul li:before {
+      color: #4d94ff;
+    }
+    
     /* Specifications */
     .specs {
       padding: 100px 20px;
       background: #fff;
     }
+    
+    .dark-theme .specs {
+      background: #121212;
+    }
+    
     .specs-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -256,6 +432,7 @@
       max-width: 1200px;
       margin: auto;
     }
+    
     .spec-card {
       background: #f9fbfd;
       border-radius: 16px;
@@ -264,9 +441,21 @@
       border: 1px solid rgba(0, 0, 0, 0.03);
       transition: transform 0.3s ease;
     }
+    
+    .dark-theme .spec-card {
+      background: #252525;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
     .spec-card:hover {
       transform: translateY(-5px);
     }
+    
+    .dark-theme .spec-card:hover {
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+    }
+    
     .spec-card h3 {
       font-size: 1.4rem;
       margin-bottom: 20px;
@@ -275,28 +464,55 @@
       align-items: center;
       gap: 12px;
     }
+    
     .spec-card h3 i {
       color: #0077ff;
     }
+    
+    .dark-theme .spec-card h3 {
+      color: #e0e0e0;
+    }
+    
+    .dark-theme .spec-card h3 i {
+      color: #4d94ff;
+    }
+    
     .spec-card ul {
       list-style: none;
     }
+    
     .spec-card ul li {
       padding: 12px 0;
       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
       display: flex;
       justify-content: space-between;
     }
+    
+    .dark-theme .spec-card ul li {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
     .spec-card ul li:last-child {
       border-bottom: none;
     }
+    
     .spec-card ul li span:first-child {
       font-weight: 500;
       color: #333;
     }
+    
+    .dark-theme .spec-card ul li span:first-child {
+      color: #e0e0e0;
+    }
+    
     .spec-card ul li span:last-child {
       color: #666;
     }
+    
+    .dark-theme .spec-card ul li span:last-child {
+      color: #aaaaaa;
+    }
+    
     /* Footer */
     footer {
       background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
@@ -305,16 +521,19 @@
       padding: 50px 20px 30px;
       font-size: 1rem;
     }
+    
     .footer-content {
       max-width: 800px;
       margin: 0 auto 30px;
     }
+    
     .social-links {
       display: flex;
       justify-content: center;
       gap: 25px;
       margin: 30px 0;
     }
+    
     .social-links a {
       display: inline-flex;
       align-items: center;
@@ -327,21 +546,26 @@
       font-size: 1.3rem;
       transition: all 0.3s ease;
     }
+    
     .social-links a:hover {
       background: #0077ff;
       color: white;
       transform: translateY(-3px);
     }
+    
     footer p {
       margin: 15px 0;
     }
+    
     footer a {
       color: #ccc;
       transition: color 0.3s ease;
     }
+    
     footer a:hover {
       color: #4d94ff;
     }
+    
     /* Responsive */
     @media (max-width: 992px) {
       .hero h1 {
@@ -351,6 +575,7 @@
         gap: 40px;
       }
     }
+    
     @media (max-width: 768px) {
       nav {
         flex-wrap: wrap;
@@ -378,6 +603,7 @@
         font-size: 1.8rem;
       }
     }
+    
     @media (max-width: 480px) {
       header h1 {
         font-size: 1.8rem;
@@ -397,7 +623,7 @@
     }
   </style>
 </head>
-<body>
+<body class="light-theme">
   <header>
     <h1>NiftyDrum</h1>
     <p>by Ronna Technologies</p>
@@ -480,9 +706,9 @@
       <div class="spec-card">
         <h3><i class="fas fa-tachometer-alt"></i> Performance</h3>
         <ul>
-          <li><span>Latency</span> <span>&lt;2.5ms</span></li>
+          <li><span>Latency</span> <span><2.5ms</span></li>
           <li><span>Velocity Sensitivity</span> <span>127 Levels</span></li>
-          <li><span>Sample Rate</span> <span>&gt;10kHz</span></li>
+          <li><span>Sample Rate</span> <span>>10kHz</span></li>
         </ul>
       </div>
       <div class="spec-card">
@@ -510,5 +736,27 @@
       <p>Contact us: <a href="mailto:contact@ronnatech.com">contact@ronnatech.com</a></p>
     </div>
   </footer>
+
+  <script>
+    // Check user's preferred color scheme
+    function setTheme() {
+      // Check if user has a preference stored
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        document.body.className = savedTheme;
+        return;
+      }
+      
+      // Check system preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.body.className = prefersDark ? 'dark-theme' : 'light-theme';
+    }
+    
+    // Initialize theme on page load
+    setTheme();
+    
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', setTheme);
+  </script>
 </body>
 </html>
