@@ -1083,9 +1083,12 @@ background: transparent;
     <div class="hero-decoration deco-1"></div>
     <div class="hero-decoration deco-2"></div>
     <div class="hero-content">
-      <div class="hero-image">
-        <img src="nd-logo.png" alt="NiftyDrum Board">
-      </div>
+    <div class="hero-image">
+      <picture>
+        <source srcset="nd-logo.png" media="(prefers-color-scheme: light)">
+        <img src="nd-logo-dark.png" alt="NiftyDrum Board">
+      </picture>
+    </div>
       <h1>Real-time MIDI Trigger Module</h1>
       <p>Connect up to 9 piezos and 1 FSR. Get real-time, low-latency MIDI over USB.</p>
       <p>Flawless performance with ultra-low latency.</p>
