@@ -36,9 +36,7 @@
         color: #0a0a0a;
       }
       
-    h1, h2, h3, h4, h5, h6 {
-      font-weight: normal !important;
-    }
+
       
       .bg-gradient {
         background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 50%, #ffffff 100%) !important;
@@ -296,7 +294,7 @@
 
     .logo {
       font-size: 1.8rem;
-      font-weight: 900;
+      font-weight: normal !important;
       background: linear-gradient(135deg, #004dff, var(--text));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -400,7 +398,7 @@
 
     .hero h1 {
       font-size: clamp(2.5rem, 4vw, 3rem);
-      font-weight: 900;
+      font-weight: normal !important;
       margin-bottom: 1.5rem;
       background: linear-gradient(135deg, #004dff 0%, var(--text) 100%);
       -webkit-background-clip: text;
@@ -601,7 +599,7 @@
     .section-content ul li:before {
       content: '\f00c';
       font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
+      font-weight: normal !important;
       position: absolute;
       left: 0;
       color: #004dff;
@@ -694,7 +692,7 @@
     }
 
     .download-card.linux .download-card-icon {
-      color: #f7931e;
+      color: var(--text);
     }
 
     .download-card h3 {
@@ -1056,6 +1054,10 @@
         padding: 2rem;
       }
     }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: normal !important;
+    }
   </style>
 </head>
 <body>
@@ -1188,8 +1190,8 @@
         <h3><i class="fas fa-tachometer-alt"></i> Performance</h3>
         <ul>
           <li><span>Latency</span> <span>&lt;2.5ms</span></li>
-          <li><span>Velocity Sensitivity</span> <span>127 Levels</span></li>
           <li><span>Sample Rate</span> <span>&gt;10kHz</span></li>
+          <li><span>Velocity Sensitivity</span> <span>127 Levels</span></li>
         </ul>
       </div>
       <div class="spec-card">
@@ -1206,10 +1208,10 @@
 
   <footer id="support">
     <div class="social-links">
-      <a href="#"><i class="fab fa-github"></i></a>
-      <a href="#"><i class="fab fa-youtube"></i></a>
-      <a href="#"><i class="fab fa-twitter"></i></a>
-      <a href="#"><i class="fab fa-linkedin"></i></a>
+      <a href="https://github.com/RonnaTechnologies" target="_blank"><i class="fab fa-github"></i></a>
+      <a href="https://www.youtube.com/@RonnaTech" target="_blank"><i class="fab fa-youtube"></i></a>
+      <a href="https://x.com/RonnaTech" target="_blank"><i class="fab fa-twitter"></i></a>
+      <a href="https://www.linkedin.com/company/ronnatech/" target="_blank"><i class="fab fa-linkedin"></i></a>
     </div>
     <p>&copy; 2025 NiftyDrum by Ronna Technologies</p>
     <p>Designed for drummers, by drummers</p>
