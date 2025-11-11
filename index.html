@@ -674,6 +674,16 @@ background: transparent;
       background: #0078d7;
     }
 
+    .download-card.mac::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #bbbbbb;
+    }
+
     .download-card.linux::before {
       content: '';
       position: absolute;
@@ -735,6 +745,12 @@ background: transparent;
     .download-card.linux .download-link {
       background: linear-gradient(135deg, #f7931e 0%, #d35400 100%);
       box-shadow: 0 10px 30px rgba(247, 147, 30, 0.3);
+    }
+
+    .download-card.mac .download-link {
+      background: #ffffff;
+      color: black !important;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
     .download-link:hover {
@@ -1086,11 +1102,11 @@ background: transparent;
     <div class="hero-image">
       <picture>
         <source srcset="nd-logo.png" media="(prefers-color-scheme: light)">
-        <img src="nd-logo-dark.png" alt="NiftyDrum Board">
+        <img src="nd-logo-dark.png" alt="NiftyDrum Logo">
       </picture>
     </div>
       <h1>Real-time MIDI Trigger Module</h1>
-      <p>Connect up to 9 piezos and 1 FSR. Get real-time, low-latency MIDI over USB.</p>
+      <p>Connect up to 9 piezos and 1 FSR. Get real-time MIDI over USB.</p>
       <p>Flawless performance with ultra-low latency.</p>
       <div class="cta-buttons">
         <a href="#software" class="btn btn-primary">Download Software</a>
@@ -1159,7 +1175,7 @@ background: transparent;
             <i class="fab fa-windows"></i>
           </div>
           <h3>Windows</h3>
-          <p>Compatible with Windows 10 and 11, 64-bit</p>
+          <p>Compatible with Windows 10, and 11</p>
           <a href="#" class="download-link" id="windowsDownload">Download for Windows</a>
         </div>
         <div class="download-card linux">
@@ -1167,17 +1183,17 @@ background: transparent;
             <i class="fab fa-linux"></i>
           </div>
           <h3>Linux</h3>
-          <p>Compatible with Ubuntu 22.04+, Debian, and more</p>
+          <p>Compatible with Ubuntu 22.04+, Debian</p>
           <a href="#" class="download-link" id="linuxDownload">Download for Linux</a>
         </div>
-        <!--<div class="download-card mac">
+        <div class="download-card mac">
           <div class="download-card-icon">
             <i class="fab fa-apple"></i>
           </div>
           <h3>macOS</h3>
-          <p>Compatible with macOS 12+ (Intel & Apple Silicon).</p>
-          <a href="#" class="download-link">Download for macOS</a>
-        </div>-->
+          <p>Compatible with macOS 12+.</p>
+          <a href="javascript:;" class="download-link">Download for macOS</a>
+        </div>
       </div>
     </div>
   </section>
@@ -1318,7 +1334,8 @@ background: transparent;
       }
     });
 
-    // Intersection Observer for animations
+
+// Intersection Observer for animations
     const observerOptions = {
       threshold: 0.1,
       rootMargin: '0px 0px -100px 0px'
@@ -1327,14 +1344,44 @@ background: transparent;
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.style.animation = 'fadeInUp 0.8s ease forwards';
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          observer.unobserve(entry.target);
         }
       });
     }, observerOptions);
 
-    document.querySelectorAll('.feature, .spec-card, .download-card').forEach(el => {
+    document.querySelectorAll('.feature, .spec-card, .download-card, .section-title').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(60px)';
+      el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
       observer.observe(el);
     });
+
+    // Separate observer for content sections with staggered children
+    document.querySelectorAll('.content-section').forEach(section => {
+      const children = section.querySelectorAll('.section-content, .section-image');
+      children.forEach((child, index) => {
+        child.style.opacity = '0';
+        child.style.transform = 'translateY(60px)';
+        child.style.transition = `opacity 0.8s ease ${index * 0.2}s, transform 0.8s ease ${index * 0.2}s`;
+      });
+      
+      const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            children.forEach(child => {
+              child.style.opacity = '1';
+              child.style.transform = 'translateY(0)';
+            });
+            sectionObserver.unobserve(entry.target);
+          }
+        });
+      }, observerOptions);
+      
+      sectionObserver.observe(section);
+    });
+
 
     // Modal functionality
     const windowsDownloadBtn = document.getElementById('windowsDownload');
