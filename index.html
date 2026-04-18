@@ -1,1433 +1,1500 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>NiftyDrum – Real-time MIDI Trigger Module</title>
-  <meta name="description" content="NiftyDrum: Real-time MIDI Trigger Module. Connect up to 9 piezos and 1 FSR. Get real-time MIDI over USB.">
-  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-  <style>
-    @font-face 
-    {
-      font-family: 'SourceSansPro';
-      src: url('SourceSansPro.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
-    }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'SourceSansPro', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NiftyDrum – Real-time MIDI Trigger Module</title>
+    <meta name="description"
+      content="NiftyDrum: Real-time MIDI Trigger Module. Connect up to 9 piezos and 1 FSR. Get real-time MIDI over USB.">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style"
+      onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </noscript>
+    <style>
+      @font-face {
+        font-family: 'SourceSansPro';
+        src: url('SourceSansPro.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+      }
 
-    :root {
-      --primary: #004dff;
-      --primary-dark: #0008cc;
-      --secondary: #ffffff;
-      --dark: #0a0a0a;
-      --dark-lighter: #1a1a1a;
-      --text: #ffffff;
-      --text-muted: #a0a0a0;
-    }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'SourceSansPro', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+      }
 
-    /* Light theme colors */
-    @media (prefers-color-scheme: light) {
       :root {
-        --dark: #ffffff;
-        --dark-lighter: #f5f5f5;
-        --text: #0a0a0a;
-        --text-muted: #666666;
+        --primary: #004dff;
+        --primary-dark: #0008cc;
+        --secondary: #ffffff;
+        --dark: #0a0a0a;
+        --dark-lighter: #1a1a1a;
+        --text: #ffffff;
+        --text-muted: #a0a0a0;
+      }
+
+      /* Light theme colors */
+      @media (prefers-color-scheme: light) {
+        :root {
+          --dark: #ffffff;
+          --dark-lighter: #f5f5f5;
+          --text: #0a0a0a;
+          --text-muted: #666666;
+        }
+
+        body {
+          background: #ffffff;
+          color: #0a0a0a;
+        }
+
+
+
+        .bg-gradient {
+          background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 50%, #ffffff 100%) !important;
+        }
+
+        nav {
+          background: rgba(255, 255, 255, 0.7) !important;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+        }
+
+        nav.scrolled {
+          background: rgba(255, 255, 255, 0.85) !important;
+        }
+
+        .nav-links a {
+          color: #0a0a0a;
+        }
+
+        .logo {
+          font-size: 1.8rem;
+          font-weight: normal !important;
+          /* Change this from 900 */
+          background: linear-gradient(135deg, #004dff, var(--text));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .hero h1 {
+          background: linear-gradient(135deg, #004dff 0%, #0a0a0a 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .section-title {
+          background: linear-gradient(135deg, #004dff, #0a0a0a);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .section-content h2 {
+          background: linear-gradient(135deg, #004dff, #0a0a0a);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .hero-image img {
+          box-shadow: 0 30px 60px rgba(0, 16, 255, 0.15);
+        }
+
+
+
+        .hero p {
+          color: #666666;
+        }
+
+        .btn-primary {
+          color: #ffffff !important;
+        }
+
+        .download-link {
+          color: #ffffff !important;
+        }
+
+        .feature {
+          background: #ffffff !important;
+          border: 1px solid rgba(0, 0, 0, 0.1) !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature:hover {
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature h3 {
+          color: #0a0a0a;
+        }
+
+        .feature p {
+          color: #666666;
+        }
+
+        .section-content p {
+          color: #666666;
+        }
+
+        .section-content ul li {
+          color: #666666;
+        }
+
+        .section-image img {
+          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .download-card {
+          background: #ffffff !important;
+          border: 1px solid rgba(0, 0, 0, 0.1) !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .download-card:hover {
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .download-card h3 {
+          color: #0a0a0a;
+        }
+
+        .download-card p {
+          color: #666666;
+        }
+
+        .spec-card {
+          background: #ffffff !important;
+          border: 1px solid rgba(0, 0, 0, 0.1) !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .spec-card:hover {
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .spec-card h3 {
+          color: #0a0a0a;
+        }
+
+        .spec-card ul li span:first-child {
+          color: #0a0a0a;
+        }
+
+        .spec-card ul li span:last-child {
+          color: #666666;
+        }
+
+        .spec-card ul li {
+          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        footer {
+          border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        footer p {
+          color: #666666;
+        }
+
+        .social-links a {
+          background: #f5f5f5 !important;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          color: #666666;
+        }
+
+        .modal {
+          background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+          background: #ffffff !important;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .close {
+          color: #666666;
+        }
+
+        .close:hover {
+          color: #0a0a0a;
+        }
+
+        .modal-title {
+          color: #0a0a0a;
+        }
+
+        .modal-info {
+          background: rgba(0, 16, 255, 0.05);
+          border: 1px solid rgba(0, 16, 255, 0.2);
+          color: #666666;
+        }
+
+        .modal-info strong {
+          color: #0a0a0a;
+        }
+
+        .modal-info code {
+          background: rgba(0, 16, 255, 0.1);
+          color: #004dff;
+        }
+
+        .modal-link-item {
+          background: rgba(0, 16, 255, 0.03) !important;
+          border: 1px solid rgba(0, 16, 255, 0.15) !important;
+        }
+
+        .modal-link-item:hover {
+          background: rgba(0, 16, 255, 0.08) !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .modal-link-text {
+          color: #0a0a0a;
+        }
+      }
+
+      html {
+        scroll-behavior: smooth;
       }
 
       body {
-        background: #ffffff;
-        color: #0a0a0a;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: var(--dark);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+        transition: background-color 0.3s ease, color 0.3s ease;
       }
-      
 
-      
+      /* Animated gradient background */
       .bg-gradient {
-        background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 50%, #ffffff 100%) !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+        animation: gradientShift 15s ease infinite;
       }
 
+      @keyframes gradientShift {
+
+        0%,
+        100% {
+          opacity: 1;
+        }
+
+        50% {
+          opacity: 0.8;
+        }
+      }
+
+      /* Navigation */
       nav {
-        background: rgba(255, 255, 255, 0.7) !important;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        padding: 1.5rem 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+        background: rgba(10, 10, 10, 0.7);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
       }
 
       nav.scrolled {
-        background: rgba(255, 255, 255, 0.85) !important;
+        padding: 1rem 5%;
+        background: rgba(10, 10, 10, 0.85);
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: normal !important;
+        background: linear-gradient(135deg, #004dff, var(--text));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
       }
 
       .nav-links a {
-        color: #0a0a0a;
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        position: relative;
       }
 
-    .logo {
-      font-size: 1.8rem;
-      font-weight: normal !important; /* Change this from 900 */
-      background: linear-gradient(135deg, #004dff, var(--text));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-      .hero h1 {
-        background: linear-gradient(135deg, #004dff 0%, #0a0a0a 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+      .nav-links a::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary);
+        transition: width 0.3s ease;
       }
 
-      .section-title {
-        background: linear-gradient(135deg, #004dff, #0a0a0a);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+      .nav-links a:hover::after {
+        width: 100%;
       }
 
-      .section-content h2 {
-        background: linear-gradient(135deg, #004dff, #0a0a0a);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+      /* Hero Section */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+        padding-top: 120px;
+        position: relative;
+        overflow: hidden;
+        background: transparent;
+      }
+
+      .hero-decoration {
+        position: absolute;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #004dff, #ffffff);
+        opacity: 0.1;
+        animation: float 6s ease-in-out infinite;
+      }
+
+      .deco-1 {
+        width: 300px;
+        height: 300px;
+        top: 10%;
+        left: 5%;
+        animation-delay: 0s;
+      }
+
+      .deco-2 {
+        width: 200px;
+        height: 200px;
+        bottom: 20%;
+        right: 10%;
+        animation-delay: 2s;
+      }
+
+      @keyframes float {
+
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+
+        50% {
+          transform: translateY(-20px) rotate(180deg);
+        }
+      }
+
+      .hero-content {
+        max-width: 900px;
+        z-index: 2;
+        position: relative;
+      }
+
+      .hero-image {
+        max-width: 500px;
+        width: 100%;
+        margin: 0 auto 2rem;
+        animation: fadeInUp 0.8s ease;
+        background: transparent;
       }
 
       .hero-image img {
-        box-shadow: 0 30px 60px rgba(0, 16, 255, 0.15);
+        width: 100%;
+        border-radius: 20px;
+        box-shadow: 0 30px 60px rgba(0, 16, 255, 0.0);
+        transition: transform 0.3s ease;
       }
 
+      .hero-image img:hover {
+        transform: scale(1.02);
+      }
 
+      .hero h1 {
+        font-size: clamp(2.5rem, 4vw, 3rem);
+        font-weight: normal !important;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #004dff 0%, var(--text) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: fadeInUp 0.8s ease 0.2s backwards;
+      }
 
       .hero p {
-        color: #666666;
-      }
-
-      .btn-primary {
-        color: #ffffff !important;
-      }
-
-      .download-link {
-        color: #ffffff !important;
-      }
-
-      .feature {
-        background: #ffffff !important;
-        border: 1px solid rgba(0, 0, 0, 0.1) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      }
-
-      .feature:hover {
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      }
-
-      .feature h3 {
-        color: #0a0a0a;
-      }
-
-      .feature p {
-        color: #666666;
-      }
-
-      .section-content p {
-        color: #666666;
-      }
-
-      .section-content ul li {
-        color: #666666;
-      }
-
-      .section-image img {
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
-      }
-
-      .download-card {
-        background: #ffffff !important;
-        border: 1px solid rgba(0, 0, 0, 0.1) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      }
-
-      .download-card:hover {
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      }
-
-      .download-card h3 {
-        color: #0a0a0a;
-      }
-
-      .download-card p {
-        color: #666666;
-      }
-
-      .spec-card {
-        background: #ffffff !important;
-        border: 1px solid rgba(0, 0, 0, 0.1) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      }
-
-      .spec-card:hover {
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-      }
-
-      .spec-card h3 {
-        color: #0a0a0a;
-      }
-
-      .spec-card ul li span:first-child {
-        color: #0a0a0a;
-      }
-
-      .spec-card ul li span:last-child {
-        color: #666666;
-      }
-
-      .spec-card ul li {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-      }
-
-      footer {
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-      }
-
-      footer p {
-        color: #666666;
-      }
-
-      .social-links a {
-        background: #f5f5f5 !important;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        color: #666666;
-      }
-
-      .modal {
-        background-color: rgba(0, 0, 0, 0.5);
-      }
-
-      .modal-content {
-        background: #ffffff !important;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-      }
-
-      .close {
-        color: #666666;
-      }
-
-      .close:hover {
-        color: #0a0a0a;
-      }
-
-      .modal-title {
-        color: #0a0a0a;
-      }
-
-      .modal-info {
-        background: rgba(0, 16, 255, 0.05);
-        border: 1px solid rgba(0, 16, 255, 0.2);
-        color: #666666;
-      }
-
-      .modal-info strong {
-        color: #0a0a0a;
-      }
-
-      .modal-info code {
-        background: rgba(0, 16, 255, 0.1);
-        color: #004dff;
-      }
-
-      .modal-link-item {
-        background: rgba(0, 16, 255, 0.03) !important;
-        border: 1px solid rgba(0, 16, 255, 0.15) !important;
-      }
-
-      .modal-link-item:hover {
-        background: rgba(0, 16, 255, 0.08) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      }
-
-      .modal-link-text {
-        color: #0a0a0a;
-      }
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: var(--dark);
-      color: var(--text);
-      line-height: 1.6;
-      overflow-x: hidden;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    /* Animated gradient background */
-    .bg-gradient {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
-      animation: gradientShift 15s ease infinite;
-    }
-
-    @keyframes gradientShift {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
-    }
-
-    /* Navigation */
-    nav {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      padding: 1.5rem 5%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 1000;
-      background: rgba(10, 10, 10, 0.7);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    nav.scrolled {
-      padding: 1rem 5%;
-      background: rgba(10, 10, 10, 0.85);
-    }
-
-    .logo {
-      font-size: 1.8rem;
-      font-weight: normal !important;
-      background: linear-gradient(135deg, #004dff, var(--text));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      list-style: none;
-    }
-
-    .nav-links a {
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: var(--primary);
-      transition: width 0.3s ease;
-    }
-
-    .nav-links a:hover::after {
-      width: 100%;
-    }
-
-    /* Hero Section */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem;
-      padding-top: 120px;
-      position: relative;
-      overflow: hidden;
-      background: transparent;
-    }
-
-    .hero-decoration {
-      position: absolute;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #004dff, #ffffff);
-      opacity: 0.1;
-      animation: float 6s ease-in-out infinite;
-    }
-
-    .deco-1 {
-      width: 300px;
-      height: 300px;
-      top: 10%;
-      left: 5%;
-      animation-delay: 0s;
-    }
-
-    .deco-2 {
-      width: 200px;
-      height: 200px;
-      bottom: 20%;
-      right: 10%;
-      animation-delay: 2s;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(180deg); }
-    }
-
-    .hero-content {
-      max-width: 900px;
-      z-index: 2;
-      position: relative;
-    }
-
-    .hero-image {
-      max-width: 500px;
-      width: 100%;
-      margin: 0 auto 2rem;
-      animation: fadeInUp 0.8s ease;
-background: transparent;
-    }
-
-    .hero-image img {
-      width: 100%;
-      border-radius: 20px;
-      box-shadow: 0 30px 60px rgba(0, 16, 255, 0.0);
-      transition: transform 0.3s ease;
-    }
-
-    .hero-image img:hover {
-      transform: scale(1.02);
-    }
-
-    .hero h1 {
-      font-size: clamp(2.5rem, 4vw, 3rem);
-      font-weight: normal !important;
-      margin-bottom: 1.5rem;
-      background: linear-gradient(135deg, #004dff 0%, var(--text) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: fadeInUp 0.8s ease 0.2s backwards;
-    }
-
-    .hero p {
-      font-size: 1.25rem;
-      color: var(--text-muted);
-      margin-bottom: 1.5rem;
-      animation: fadeInUp 0.8s ease 0.4s backwards;
-    }
-
-    .cta-buttons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      animation: fadeInUp 0.8s ease 0.6s backwards;
-      margin-top: 2rem;
-    }
-
-    .btn {
-      padding: 1rem 2.5rem;
-      border: none;
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #004dff, #0008cc);
-      color: var(--text);
-      box-shadow: 0 10px 30px rgba(0, 16, 255, 0.3);
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 40px rgba(0, 16, 255, 0.5);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--text);
-      border: 2px solid var(--text);
-    }
-
-    .btn-secondary:hover {
-      background: var(--text);
-      color: var(--dark);
-      transform: translateY(-3px);
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Features Section */
-    .features {
-      padding: 8rem 5%;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .section-title {
-      text-align: center;
-      font-size: clamp(2rem, 4vw, 3rem);
-      margin-bottom: 4rem;
-      background: linear-gradient(135deg, #004dff, var(--text));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 2rem;
-    }
-
-    .feature {
-      background: var(--dark-lighter);
-      border-radius: 20px;
-      padding: 3rem 2rem;
-      text-align: center;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .feature::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(0, 16, 255, 0.1), rgba(255, 255, 255, 0.05));
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .feature:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    }
-
-    .feature:hover::before {
-      opacity: 1;
-    }
-
-    .feature-icon {
-      font-size: 3rem;
-      margin-bottom: 1.5rem;
-      color: #004dff;
-      position: relative;
-      z-index: 1;
-    }
-
-    .feature h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: var(--text);
-      position: relative;
-      z-index: 1;
-    }
-
-    .feature p {
-      font-size: 1.05rem;
-      color: var(--text-muted);
-      line-height: 1.7;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Content Section */
-    .content-section {
-      padding: 8rem 5%;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: center;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .content-section.reverse {
-      direction: rtl;
-    }
-
-    .content-section.reverse > * {
-      direction: ltr;
-    }
-
-    .section-content h2 {
-      font-size: clamp(2rem, 4vw, 3rem);
-      margin-bottom: 2rem;
-      background: linear-gradient(135deg, #004dff, var(--text));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .section-content p {
-      color: var(--text-muted);
-      margin-bottom: 1.5rem;
-      font-size: 1.1rem;
-      line-height: 1.8;
-    }
-
-     .section-content ul {
-      list-style: none;
-      margin-top: 2rem;
-    }
-
-    .section-content ul li {
-      margin-bottom: 1rem;
-      padding-left: 2rem;
-      position: relative;
-      color: var(--text-muted);
-      font-size: 1.05rem;
-    }
-
-    /* Ensure Font Awesome is loaded before using its icons */
-    .section-content ul li:before {
-      content: '\f00c'; /* Unicode for Font Awesome solid checkmark */
-      font-family: 'Font Awesome 6 Free'; /* Correct Font Awesome font family */
-      font-weight: 900; /* Correct font weight for solid icons */
-      position: absolute;
-      left: 0;
-      color: #004dff;
-      font-size: 1.2rem;
-      /* Optional: Add line-height if needed for vertical alignment */
-      /* line-height: 1; */
-    }
-
-    .section-image img {
-      width: 100%;
-      border-radius: 20px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-      transition: transform 0.3s ease;
-    }
-
-    .section-image:hover img {
-      transform: scale(1.02);
-    }
-
-    /* Software Section */
-    .software {
-      padding: 8rem 5%;
-      background: linear-gradient(135deg, rgba(0, 16, 255, 0.05), rgba(255, 255, 255, 0.02));
-    }
-
-    .software-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .download-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin-top: 3rem;
-    }
-
-    .download-card {
-      background: var(--dark-lighter);
-      border-radius: 20px;
-      padding: 3rem 2rem;
-      text-align: center;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .download-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: linear-gradient(90deg, #004dff, #ffffff);
-    }
-
-    .download-card.windows::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: #0078d7;
-    }
-
-    .download-card.mac::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: #bbbbbb;
-    }
-
-    .download-card.linux::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background: #f7931e;
-    }
-
-    .download-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    }
-
-    .download-card-icon {
-      font-size: 3rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .download-card.windows .download-card-icon {
-      color: #0078d7;
-    }
-
-    .download-card.linux .download-card-icon {
-      color: var(--text);
-    }
-
-    .download-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: var(--text);
-    }
-
-    .download-card p {
-      font-size: 1.05rem;
-      color: var(--text-muted);
-      margin-bottom: 2rem;
-    }
-
-    .download-link {
-      display: inline-block;
-      padding: 1rem 2rem;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white;
-      border-radius: 50px;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      box-shadow: 0 10px 30px rgba(77, 148, 255, 0.3);
-    }
-
-    .download-card.windows .download-link {
-      background: linear-gradient(135deg, #0078d7 0%, #005a9e 100%);
-      box-shadow: 0 10px 30px rgba(0, 120, 215, 0.3);
-    }
-
-    .download-card.linux .download-link {
-      background: linear-gradient(135deg, #f7931e 0%, #d35400 100%);
-      box-shadow: 0 10px 30px rgba(247, 147, 30, 0.3);
-    }
-
-    .download-card.mac .download-link {
-      background: #ffffff;
-      color: black !important;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .download-link:hover {
-      transform: translateY(-2px);
-    }
-
-    .download-card.windows .download-link:hover {
-      box-shadow: 0 15px 40px rgba(0, 120, 215, 0.5);
-    }
-
-    .download-card.linux .download-link:hover {
-      box-shadow: 0 15px 40px rgba(247, 147, 30, 0.5);
-    }
-
-    /* Specs Section */
-    .specs {
-      padding: 8rem 5%;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .specs-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-
-    .spec-card {
-      background: var(--dark-lighter);
-      border-radius: 20px;
-      padding: 2.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    .spec-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-    }
-
-    .spec-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 1.5rem;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .spec-card h3 i {
-      color: #004dff;
-    }
-
-    .spec-card ul {
-      list-style: none;
-    }
-
-    .spec-card ul li {
-      padding: 1rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .spec-card ul li:last-child {
-      border-bottom: none;
-    }
-
-    .spec-card ul li span:first-child {
-      font-weight: 500;
-      color: var(--text);
-    }
-
-    .spec-card ul li span:last-child {
-      color: var(--text-muted);
-    }
-
-    /* Footer */
-    footer {
-      padding: 4rem 5%;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      text-align: center;
-    }
-
-    .social-links {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      margin-bottom: 2rem;
-    }
-
-    .social-links a {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: var(--dark-lighter);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-muted);
-      font-size: 1.3rem;
-    }
-
-    .social-links a:hover {
-      background: var(--primary);
-      color: var(--text);
-      transform: translateY(-5px);
-      border-color: var(--primary);
-    }
-
-    footer p {
-      color: var(--text-muted);
-      margin: 0.5rem 0;
-    }
-
-    footer a {
-      color: #004dff;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-
-    footer a:hover {
-      color: #ffffff;
-    }
-
-    /* Modal Styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(5px);
-    }
-
-    .modal-content {
-      background: var(--dark-lighter);
-      margin: 10% auto;
-      padding: 2.5rem;
-      border-radius: 20px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-      position: relative;
-      animation: modalFadeIn 0.3s ease-out;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    @keyframes modalFadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .close {
-      position: absolute;
-      right: 1.5rem;
-      top: 1.5rem;
-      color: var(--text-muted);
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: color 0.3s ease;
-    }
-
-    .close:hover {
-      color: var(--text);
-    }
-
-    .modal-title {
-      text-align: center;
-      font-size: 1.8rem;
-      margin-bottom: 2rem;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-    }
-
-    .modal-info {
-      background: rgba(0, 16, 255, 0.1);
-      border: 1px solid rgba(0, 16, 255, 0.3);
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 2rem;
-      font-size: 0.95rem;
-      line-height: 1.6;
-      color: var(--text-muted);
-    }
-
-    .modal-info strong {
-      color: var(--text);
-    }
-
-    .modal-info code {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 1rem;
-      color: var(--text);
-    }
-
-    .modal-info a {
-      color: #004dff;
-      text-decoration: none;
-    }
-
-    .modal-info a:hover {
-      color: #ffffff;
-    }
-
-    .modal-links {
-      list-style: none;
-    }
-
-    .modal-link-item {
-      margin-bottom: 1rem;
-      background: rgba(0, 16, 255, 0.05);
-      border-radius: 12px;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(0, 16, 255, 0.2);
-      overflow: hidden;
-    }
-
-    .modal-link-item:hover {
-      background: rgba(0, 16, 255, 0.15);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal-link-content {
-      display: flex;
-      align-items: center;
-      padding: 1rem 1.5rem;
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .modal-link-icon {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 1rem;
-      font-size: 1.5rem;
-      color: #004dff;
-    }
-
-    .modal-link-text {
-      font-size: 1.1rem;
-      font-weight: 600;
-      flex: 1;
-      color: var(--text);
-    }
-
-    .modal-link-arrow {
-      color: #004dff;
-      font-size: 1.2rem;
-      transition: transform 0.3s ease;
-    }
-
-    .modal-link-item:hover .modal-link-arrow {
-      transform: translateX(5px);
-    }
-
-    /* Responsive */
-    @media (max-width: 968px) {
-      .content-section {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-      }
-
-      .content-section.reverse {
-        direction: ltr;
-      }
-    }
-
-    @media (max-width: 768px) {
-      nav {
-        padding: 1rem 4%;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-
-      .nav-links {
-        gap: 1rem;
-        font-size: 0.9rem;
-      }
-
-      .hero {
-        padding-top: 120px;
-
+        font-size: 1.25rem;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+        animation: fadeInUp 0.8s ease 0.4s backwards;
       }
 
       .cta-buttons {
-        flex-direction: column;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        animation: fadeInUp 0.8s ease 0.6s backwards;
+        margin-top: 2rem;
       }
 
       .btn {
-        width: 100%;
+        padding: 1rem 2.5rem;
+        border: none;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
       }
 
-      .features, .software, .specs, .content-section {
-        padding: 4rem 4%;
+      .btn-primary {
+        background: linear-gradient(135deg, #004dff, #0008cc);
+        color: var(--text);
+        box-shadow: 0 10px 30px rgba(0, 16, 255, 0.3);
       }
-    }
 
-    @media (max-width: 480px) {
-      .nav-links {
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0, 16, 255, 0.5);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: var(--text);
+        border: 2px solid var(--text);
+      }
+
+      .btn-secondary:hover {
+        background: var(--text);
+        color: var(--dark);
+        transform: translateY(-3px);
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Features Section */
+      .features {
+        padding: 8rem 5%;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: clamp(2rem, 4vw, 3rem);
+        margin-bottom: 4rem;
+        background: linear-gradient(135deg, #004dff, var(--text));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 2rem;
+      }
+
+      .feature {
+        background: var(--dark-lighter);
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .feature::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
         width: 100%;
-        justify-content: space-around;
-        gap: 0.5rem;
-        font-size: 0.85rem;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(0, 16, 255, 0.1), rgba(255, 255, 255, 0.05));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .feature:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .feature:hover::before {
+        opacity: 1;
+      }
+
+      .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        color: #004dff;
+        position: relative;
+        z-index: 1;
+      }
+
+      .feature h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--text);
+        position: relative;
+        z-index: 1;
+      }
+
+      .feature p {
+        font-size: 1.05rem;
+        color: var(--text-muted);
+        line-height: 1.7;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Content Section */
+      .content-section {
+        padding: 8rem 5%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .content-section.reverse {
+        direction: rtl;
+      }
+
+      .content-section.reverse>* {
+        direction: ltr;
+      }
+
+      .section-content h2 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        margin-bottom: 2rem;
+        background: linear-gradient(135deg, #004dff, var(--text));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .section-content p {
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        line-height: 1.8;
+      }
+
+      .section-content ul {
+        list-style: none;
+        margin-top: 2rem;
+      }
+
+      .section-content ul li {
+        margin-bottom: 1rem;
+        padding-left: 2rem;
+        position: relative;
+        color: var(--text-muted);
+        font-size: 1.05rem;
+      }
+
+      /* Ensure Font Awesome is loaded before using its icons */
+      .section-content ul li:before {
+        content: '\f00c';
+        /* Unicode for Font Awesome solid checkmark */
+        font-family: 'Font Awesome 6 Free';
+        /* Correct Font Awesome font family */
+        font-weight: 900;
+        /* Correct font weight for solid icons */
+        position: absolute;
+        left: 0;
+        color: #004dff;
+        font-size: 1.2rem;
+        /* Optional: Add line-height if needed for vertical alignment */
+        /* line-height: 1; */
+      }
+
+      .section-image img {
+        width: 100%;
+        border-radius: 20px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease;
+      }
+
+      .section-image:hover img {
+        transform: scale(1.02);
+      }
+
+      /* Software Section */
+      .software {
+        padding: 8rem 5%;
+        background: linear-gradient(135deg, rgba(0, 16, 255, 0.05), rgba(255, 255, 255, 0.02));
+      }
+
+      .software-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        text-align: center;
+      }
+
+      .download-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .download-card {
+        background: var(--dark-lighter);
+        border-radius: 20px;
+        padding: 3rem 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .download-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, #004dff, #ffffff);
+      }
+
+      .download-card.windows::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: #0078d7;
+      }
+
+      .download-card.mac::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: #bbbbbb;
+      }
+
+      .download-card.linux::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: #f7931e;
+      }
+
+      .download-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+
+      .download-card-icon {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .download-card.windows .download-card-icon {
+        color: #0078d7;
+      }
+
+      .download-card.linux .download-card-icon {
+        color: var(--text);
+      }
+
+      .download-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--text);
+      }
+
+      .download-card p {
+        font-size: 1.05rem;
+        color: var(--text-muted);
+        margin-bottom: 2rem;
+      }
+
+      .download-link {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        box-shadow: 0 10px 30px rgba(77, 148, 255, 0.3);
+      }
+
+      .download-card.windows .download-link {
+        background: linear-gradient(135deg, #0078d7 0%, #005a9e 100%);
+        box-shadow: 0 10px 30px rgba(0, 120, 215, 0.3);
+      }
+
+      .download-card.linux .download-link {
+        background: linear-gradient(135deg, #f7931e 0%, #d35400 100%);
+        box-shadow: 0 10px 30px rgba(247, 147, 30, 0.3);
+      }
+
+      .download-card.mac .download-link {
+        background: #ffffff;
+        color: black !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .download-link:hover {
+        transform: translateY(-2px);
+      }
+
+      .download-card.windows .download-link:hover {
+        box-shadow: 0 15px 40px rgba(0, 120, 215, 0.5);
+      }
+
+      .download-card.linux .download-link:hover {
+        box-shadow: 0 15px 40px rgba(247, 147, 30, 0.5);
+      }
+
+      /* Specs Section */
+      .specs {
+        padding: 8rem 5%;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .specs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .spec-card {
+        background: var(--dark-lighter);
+        border-radius: 20px;
+        padding: 2.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .spec-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      }
+
+      .spec-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .spec-card h3 i {
+        color: #004dff;
+      }
+
+      .spec-card ul {
+        list-style: none;
+      }
+
+      .spec-card ul li {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .spec-card ul li:last-child {
+        border-bottom: none;
+      }
+
+      .spec-card ul li span:first-child {
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      .spec-card ul li span:last-child {
+        color: var(--text-muted);
+      }
+
+      /* Footer */
+      footer {
+        padding: 4rem 5%;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+      }
+
+      .social-links a {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--dark-lighter);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-muted);
+        font-size: 1.3rem;
+      }
+
+      .social-links a:hover {
+        background: var(--primary);
+        color: var(--text);
+        transform: translateY(-5px);
+        border-color: var(--primary);
+      }
+
+      footer p {
+        color: var(--text-muted);
+        margin: 0.5rem 0;
+      }
+
+      footer a {
+        color: #004dff;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      footer a:hover {
+        color: #ffffff;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
       }
 
       .modal-content {
-        margin: 15% auto;
-        padding: 2rem;
+        background: var(--dark-lighter);
+        margin: 10% auto;
+        padding: 2.5rem;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        position: relative;
+        animation: modalFadeIn 0.3s ease-out;
+        border: 1px solid rgba(255, 255, 255, 0.1);
       }
-    }
 
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
 
-  </style>
-</head>
-<body>
-  <div class="bg-gradient"></div>
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-  <nav id="nav">
-    <div class="logo">NiftyDrum</div>
-    <ul class="nav-links">
-      <li><a href="#features">Features</a></li>
-      <li><a href="#details">How It Works</a></li>
-      <li><a href="#software">Software</a></li>
-      <li><a href="#specs">Specs</a></li>
-    </ul>
-  </nav>
+      .close {
+        position: absolute;
+        right: 1.5rem;
+        top: 1.5rem;
+        color: var(--text-muted);
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
 
-  <section class="hero">
-    <div class="hero-decoration deco-1"></div>
-    <div class="hero-decoration deco-2"></div>
-    <div class="hero-content">
-    <div class="hero-image">
-      <picture>
-        <source srcset="nd-logo.png" media="(prefers-color-scheme: light)">
-        <img src="nd-logo-dark.png" alt="NiftyDrum Logo">
-      </picture>
-    </div>
-      <h1>Real-time MIDI Trigger Module</h1>
-      <p>Connect up to 9 piezos and 1 FSR. Get real-time MIDI over USB.</p>
-      <p>Flawless performance with ultra-low latency.</p>
-      <div class="cta-buttons">
-        <a href="#software" class="btn btn-primary">Download Software</a>
-        <a href="#specs" class="btn btn-secondary">View Specs</a>
-      </div>
-    </div>
-  </section>
+      .close:hover {
+        color: var(--text);
+      }
 
-  <section class="features" id="features">
-    <h2 class="section-title">Features</h2>
-    <div class="features-grid">
-      <div class="feature">
-        <div class="feature-icon">
-          <i class="fas fa-plug"></i>
-        </div>
-        <h3>9 Piezos + 1 FSR</h3>
-        <p>Simply plug your pads into the board and start playing immediately.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">
-          <i class="fas fa-bolt"></i>
-        </div>
-        <h3>Low-Latency MIDI</h3>
-        <p>Lightning-fast MIDI over USB with less than 2.5ms latency.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">
-          <i class="fas fa-rocket"></i>
-        </div>
-        <h3>Plug & Play</h3>
-        <p>Connect and play immediately. No drivers or complicated setup required.</p>
-      </div>
-      <div class="feature">
-        <div class="feature-icon">
-          <i class="fas fa-sliders-h"></i>
-        </div>
-        <h3>Configurable</h3>
-        <p>Assign notes and tweak trigger parameters in our intuitive user interface.</p>
-      </div>
-    </div>
-  </section>
+      .modal-title {
+        text-align: center;
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
 
-  <section class="content-section" id="details">
-    <div class="section-image">
-      <img src="https://ronnatech.com/wp-content/uploads/2025/08/IMG_0361-bgr.png" alt="NiftyDrum connected">
-    </div>
-    <div class="section-content">
-      <h2>How It Works</h2>
-      <p>NiftyDrum delivers high-level MIDI performance in 4 easy steps:</p>
-      <ul>
-        <li>Connect up to 9 piezos and 1 FSR to the terminal blocks</li>
-        <li>Plug into your DAW or drum module via USB</li>
-        <li>Use our GUI for trigger parameters, mapping and velocity shaping</li>
-        <li>Play — notes stream out instantly with zero perceivable latency</li>
+      .modal-info {
+        background: rgba(0, 16, 255, 0.1);
+        border: 1px solid rgba(0, 16, 255, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: var(--text-muted);
+      }
+
+      .modal-info strong {
+        color: var(--text);
+      }
+
+      .modal-info code {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 1rem;
+        color: var(--text);
+      }
+
+      .modal-info a {
+        color: #004dff;
+        text-decoration: none;
+      }
+
+      .modal-info a:hover {
+        color: #ffffff;
+      }
+
+      .modal-links {
+        list-style: none;
+      }
+
+      .modal-link-item {
+        margin-bottom: 1rem;
+        background: rgba(0, 16, 255, 0.05);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 16, 255, 0.2);
+        overflow: hidden;
+      }
+
+      .modal-link-item:hover {
+        background: rgba(0, 16, 255, 0.15);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .modal-link-content {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .modal-link-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1.5rem;
+        color: #004dff;
+      }
+
+      .modal-link-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        flex: 1;
+        color: var(--text);
+      }
+
+      .modal-link-arrow {
+        color: #004dff;
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+      }
+
+      .modal-link-item:hover .modal-link-arrow {
+        transform: translateX(5px);
+      }
+
+      /* Responsive */
+      @media (max-width: 968px) {
+        .content-section {
+          grid-template-columns: 1fr;
+          gap: 3rem;
+        }
+
+        .content-section.reverse {
+          direction: ltr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        nav {
+          padding: 1rem 4%;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .nav-links {
+          gap: 1rem;
+          font-size: 0.9rem;
+        }
+
+        .hero {
+          padding-top: 120px;
+
+        }
+
+        .cta-buttons {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+
+        .features,
+        .software,
+        .specs,
+        .content-section {
+          padding: 4rem 4%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .nav-links {
+          width: 100%;
+          justify-content: space-around;
+          gap: 0.5rem;
+          font-size: 0.85rem;
+        }
+
+        .modal-content {
+          margin: 15% auto;
+          padding: 2rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="bg-gradient"></div>
+
+    <nav id="nav">
+      <div class="logo">NiftyDrum</div>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#details">How It Works</a></li>
+        <li><a href="#software">Software</a></li>
+        <li><a href="#specs">Specs</a></li>
       </ul>
-    </div>
-  </section>
+    </nav>
 
-  <section class="software" id="software">
-    <div class="software-content">
-      <h2 class="section-title">Download Software</h2>
-      <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 800px; margin: 0 auto 3rem;">Get the official NiftyDrum configuration software for your operating system. Configure your triggers, map MIDI notes, and fine-tune velocity curves with our intuitive interface.</p>
-      <div class="download-cards">
-        <div class="download-card windows">
-          <div class="download-card-icon">
-            <i class="fab fa-windows"></i>
-          </div>
-          <h3>Windows</h3>
-          <p>Compatible with Windows 10, and 11</p>
-          <a href="#" class="download-link" id="windowsDownload">Download for Windows</a>
+    <section class="hero">
+      <div class="hero-decoration deco-1"></div>
+      <div class="hero-decoration deco-2"></div>
+      <div class="hero-content">
+        <div class="hero-image">
+          <picture>
+            <source srcset="nd-logo.png" media="(prefers-color-scheme: light)">
+            <img src="nd-logo-dark.png" alt="NiftyDrum Logo">
+          </picture>
         </div>
-        <div class="download-card linux">
-          <div class="download-card-icon">
-            <i class="fab fa-linux"></i>
-          </div>
-          <h3>Linux</h3>
-          <p>Compatible with Ubuntu 22.04+, Debian</p>
-          <a href="#" class="download-link" id="linuxDownload">Download for Linux</a>
-        </div>
-        <div class="download-card mac">
-          <div class="download-card-icon">
-            <i class="fab fa-apple"></i>
-          </div>
-          <h3>macOS</h3>
-          <p>Compatible with macOS 12+.</p>
-          <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3334" class="download-link">Download for macOS</a>
+        <h1>Real-time MIDI Trigger Module</h1>
+        <p>Connect up to 9 piezos and 1 FSR. Get real-time MIDI over USB.</p>
+        <p>Flawless performance with ultra-low latency.</p>
+        <div class="cta-buttons">
+          <a href="#software" class="btn btn-primary">Download Software</a>
+          <a href="#specs" class="btn btn-secondary">View Specs</a>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="specs" id="specs">
-    <h2 class="section-title">Technical Specifications</h2>
-    <div class="specs-grid">
-      <div class="spec-card">
-        <h3><i class="fas fa-microchip"></i> Hardware</h3>
+    <section class="features" id="features">
+      <h2 class="section-title">Features</h2>
+      <div class="features-grid">
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fas fa-plug"></i>
+          </div>
+          <h3>9 Piezos + 1 FSR</h3>
+          <p>Simply plug your pads into the board and start playing immediately.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fas fa-bolt"></i>
+          </div>
+          <h3>Low-Latency MIDI</h3>
+          <p>Lightning-fast MIDI over USB with less than 2.5ms latency.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <h3>Plug & Play</h3>
+          <p>Connect and play immediately. No drivers or complicated setup required.</p>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">
+            <i class="fas fa-sliders-h"></i>
+          </div>
+          <h3>Configurable</h3>
+          <p>Assign notes and tweak trigger parameters in our intuitive user interface.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="details">
+      <div class="section-image">
+        <img src="https://ronnatech.com/wp-content/uploads/2025/08/IMG_0361-bgr.png" alt="NiftyDrum connected">
+      </div>
+      <div class="section-content">
+        <h2>How It Works</h2>
+        <p>NiftyDrum delivers high-level MIDI performance in 4 easy steps:</p>
         <ul>
-          <li><span>Inputs</span> <span>9 Piezo + 1 FSR</span></li>
-          <li><span>Connectors</span> <span>Terminal blocks</span></li>
-          <li><span>USB</span> <span>USB 2.0 Type-C</span></li>
-          <li><span>Power</span> <span>USB Powered</span></li>
-          <li><span>Dimensions</span> <span>65x56.5mm</span></li>
+          <li>Connect up to 9 piezos and 1 FSR to the terminal blocks</li>
+          <li>Plug into your DAW or drum module via USB</li>
+          <li>Use our GUI for trigger parameters, mapping and velocity shaping</li>
+          <li>Play — notes stream out instantly with zero perceivable latency</li>
         </ul>
       </div>
-      <div class="spec-card">
-        <h3><i class="fas fa-tachometer-alt"></i> Performance</h3>
-        <ul>
-          <li><span>Latency</span> <span>&lt;2.5ms</span></li>
-          <li><span>Sample Rate</span> <span>&gt;10kHz</span></li>
-          <li><span>Velocity Sensitivity</span> <span>127 Levels</span></li>
-        </ul>
-      </div>
-      <div class="spec-card">
-        <h3><i class="fas fa-cogs"></i> Software</h3>
-        <ul>
-          <li><span>Compatibility</span> <span>Windows, Mac, Linux</span></li>
-          <li><span>User Interface</span> <span>Web-based GUI</span></li>
-          <li><span>Firmware</span> <span>USB Updates</span></li>
-          <li><span>MIDI Messages</span> <span>Notes, CC</span></li>
-        </ul>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <footer id="support">
-    <div class="social-links">
-      <a href="https://github.com/RonnaTechnologies" target="_blank"><i class="fab fa-github"></i></a>
-      <a href="https://www.youtube.com/@RonnaTech" target="_blank"><i class="fab fa-youtube"></i></a>
-      <a href="https://x.com/RonnaTech" target="_blank"><i class="fab fa-twitter"></i></a>
-      <a href="https://www.linkedin.com/company/ronnatech/" target="_blank"><i class="fab fa-linkedin"></i></a>
-    </div>
-    <p>&copy; 2025 NiftyDrum by Ronna Technologies</p>
-    <p>Designed for drummers, by drummers</p>
-    <p>Support & Community: <a href="https://ronnatech.com/forum/forum/niftydrum/" target="_blank">Visit our Forum</a></p>
-  </footer>
-
-  <!-- Windows Download Modal -->
-  <div id="windowsModal" class="modal">
-    <div class="modal-content">
-      <span class="close windows-close">&times;</span>
-      <h2 class="modal-title"><i class="fab fa-windows"></i> Windows Downloads</h2>
-      
-      <div class="modal-info">
-        <p><i class="fas fa-info-circle"></i> <strong>Important:</strong> To run the NiftyDrum software on Windows, you need to install the Microsoft Visual C++ Redistributable package.</p>
-        <p>Download and install the latest version from Microsoft:</p>
-        <p><a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank">Download Visual C++ Redistributable (x64)</a></p>
-      </div>
-      <ul class="modal-links">
-        <li class="modal-link-item">
-          <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3330" target="_blank" class="modal-link-content">
-            <div class="modal-link-icon">
+    <section class="software" id="software">
+      <div class="software-content">
+        <h2 class="section-title">Download Software</h2>
+        <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 800px; margin: 0 auto 3rem;">Get the official
+          NiftyDrum configuration software for your operating system. Configure your triggers, map MIDI notes, and
+          fine-tune velocity curves with our intuitive interface.</p>
+        <div class="download-cards">
+          <div class="download-card windows">
+            <div class="download-card-icon">
               <i class="fab fa-windows"></i>
             </div>
-            <span class="modal-link-text">Download</span>
-            <i class="fas fa-arrow-right modal-link-arrow"></i>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Linux Download Modal -->
-  <div id="linuxModal" class="modal">
-    <div class="modal-content">
-      <span class="close linux-close">&times;</span>
-      <h2 class="modal-title"><i class="fab fa-linux"></i> Linux Downloads</h2>
-      
-      <div class="modal-info">
-        <p><i class="fas fa-info-circle"></i> <strong>Important:</strong> To ensure proper USB device access, you may need to add your user to the dialout group. Run this command in your terminal:</p>
-        <p><code>sudo usermod -aG dialout $USER</code></p>
-        <p>Then log out and log back in for the changes to take effect.</p>
+            <h3>Windows</h3>
+            <p>Compatible with Windows 10, and 11</p>
+            <a href="#" class="download-link" id="windowsDownload">Download for Windows</a>
+          </div>
+          <div class="download-card linux">
+            <div class="download-card-icon">
+              <i class="fab fa-linux"></i>
+            </div>
+            <h3>Linux</h3>
+            <p>Compatible with Ubuntu 22.04+, Debian</p>
+            <a href="#" class="download-link" id="linuxDownload">Download for Linux</a>
+          </div>
+          <div class="download-card mac">
+            <div class="download-card-icon">
+              <i class="fab fa-apple"></i>
+            </div>
+            <h3>macOS</h3>
+            <p>Compatible with macOS 12+.</p>
+            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3334" class="download-link">Download for
+              macOS</a>
+          </div>
+        </div>
       </div>
-      
-      <ul class="modal-links">
-        <li class="modal-link-item">
-          <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3336" target="_blank" class="modal-link-content">
-            <div class="modal-link-icon">
-              <i class="fab fa-ubuntu"></i>
-            </div>
-            <span class="modal-link-text">Ubuntu 22.04</span>
-            <i class="fas fa-arrow-right modal-link-arrow"></i>
-          </a>
-        </li>
-        <li class="modal-link-item">
-          <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3337" target="_blank" class="modal-link-content">
-            <div class="modal-link-icon">
-              <i class="fab fa-ubuntu"></i>
-            </div>
-            <span class="modal-link-text">Ubuntu 24.04</span>
-            <i class="fas fa-arrow-right modal-link-arrow"></i>
-          </a>
-        </li>
-        <li class="modal-link-item">
-          <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3335" target="_blank" class="modal-link-content">
-            <div class="modal-link-icon debian-icon">
-              <img src="https://www.debian.org/logos/openlogo-nd.svg" height=24 width=24 alt="Debian Logo">
-            </div>
-            <span class="modal-link-text">Debian 13</span>
-            <i class="fas fa-arrow-right modal-link-arrow"></i>
-          </a>
-        </li>
-      </ul>
+    </section>
+
+    <section class="specs" id="specs">
+      <h2 class="section-title">Technical Specifications</h2>
+      <div class="specs-grid">
+        <div class="spec-card">
+          <h3><i class="fas fa-microchip"></i> Hardware</h3>
+          <ul>
+            <li><span>Inputs</span> <span>9 Piezo + 1 FSR</span></li>
+            <li><span>Connectors</span> <span>Terminal blocks</span></li>
+            <li><span>USB</span> <span>USB 2.0 Type-C</span></li>
+            <li><span>Power</span> <span>USB Powered</span></li>
+            <li><span>Dimensions</span> <span>65x56.5mm</span></li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h3><i class="fas fa-tachometer-alt"></i> Performance</h3>
+          <ul>
+            <li><span>Latency</span> <span>&lt;2.5ms</span></li>
+            <li><span>Sample Rate</span> <span>&gt;10kHz</span></li>
+            <li><span>Velocity Sensitivity</span> <span>127 Levels</span></li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h3><i class="fas fa-cogs"></i> Software</h3>
+          <ul>
+            <li><span>Compatibility</span> <span>Windows, Mac, Linux</span></li>
+            <li><span>User Interface</span> <span>Web-based GUI</span></li>
+            <li><span>Firmware</span> <span>USB Updates</span></li>
+            <li><span>MIDI Messages</span> <span>Notes, CC</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer id="support">
+      <div class="social-links">
+        <a href="https://github.com/RonnaTechnologies" target="_blank"><i class="fab fa-github"></i></a>
+        <a href="https://www.youtube.com/@RonnaTech" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://x.com/RonnaTech" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://www.linkedin.com/company/ronnatech/" target="_blank"><i class="fab fa-linkedin"></i></a>
+      </div>
+      <p>&copy; 2025 NiftyDrum by Ronna Technologies</p>
+      <p>Designed for drummers, by drummers</p>
+      <p>Support & Community: <a href="https://ronnatech.com/forum/forum/niftydrum/" target="_blank">Visit our Forum</a>
+      </p>
+    </footer>
+
+    <!-- Windows Download Modal -->
+    <div id="windowsModal" class="modal">
+      <div class="modal-content">
+        <span class="close windows-close">&times;</span>
+        <h2 class="modal-title"><i class="fab fa-windows"></i> Windows Downloads</h2>
+
+        <div class="modal-info">
+          <p><i class="fas fa-info-circle"></i> <strong>Important:</strong> To run the NiftyDrum software on Windows,
+            you need to install the Microsoft Visual C++ Redistributable package.</p>
+          <p>Download and install the latest version from Microsoft:</p>
+          <p><a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank">Download Visual C++
+              Redistributable (x64)</a></p>
+        </div>
+        <ul class="modal-links">
+          <li class="modal-link-item">
+            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3330" target="_blank"
+              class="modal-link-content">
+              <div class="modal-link-icon">
+                <i class="fab fa-windows"></i>
+              </div>
+              <span class="modal-link-text">Download</span>
+              <i class="fas fa-arrow-right modal-link-arrow"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
 
-  <script>
-    // Smooth scrolling
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    <!-- Linux Download Modal -->
+    <div id="linuxModal" class="modal">
+      <div class="modal-content">
+        <span class="close linux-close">&times;</span>
+        <h2 class="modal-title"><i class="fab fa-linux"></i> Linux Downloads</h2>
+
+        <div class="modal-info">
+          <p><i class="fas fa-info-circle"></i> <strong>Important:</strong> To ensure proper USB device access, you may
+            need to add your user to the dialout group. Run this command in your terminal:</p>
+          <p><code>sudo usermod -aG dialout $USER</code></p>
+          <p>Then log out and log back in for the changes to take effect.</p>
+        </div>
+
+        <ul class="modal-links">
+          <li class="modal-link-item">
+            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3336" target="_blank"
+              class="modal-link-content">
+              <div class="modal-link-icon">
+                <i class="fab fa-ubuntu"></i>
+              </div>
+              <span class="modal-link-text">Ubuntu 22.04</span>
+              <i class="fas fa-arrow-right modal-link-arrow"></i>
+            </a>
+          </li>
+          <li class="modal-link-item">
+            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3337" target="_blank"
+              class="modal-link-content">
+              <div class="modal-link-icon">
+                <i class="fab fa-ubuntu"></i>
+              </div>
+              <span class="modal-link-text">Ubuntu 24.04</span>
+              <i class="fas fa-arrow-right modal-link-arrow"></i>
+            </a>
+          </li>
+          <li class="modal-link-item">
+            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3335" target="_blank"
+              class="modal-link-content">
+              <div class="modal-link-icon debian-icon">
+                <img src="https://www.debian.org/logos/openlogo-nd.svg" height=24 width=24 alt="Debian Logo">
+              </div>
+              <span class="modal-link-text">Debian 13</span>
+              <i class="fas fa-arrow-right modal-link-arrow"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      // Smooth scrolling
+      document.querySelectorAll('a[href^="#"]').forEach(anchor =>
+      {
+        anchor.addEventListener('click', function (e)
+        {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target)
+          {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      });
+
+      // Nav scroll effect
+      const nav = document.getElementById('nav');
+      window.addEventListener('scroll', () =>
+      {
+        if (window.scrollY > 100)
+        {
+          nav.classList.add('scrolled');
+        } else
+        {
+          nav.classList.remove('scrolled');
         }
       });
-    });
-
-    // Nav scroll effect
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 100) {
-        nav.classList.add('scrolled');
-      } else {
-        nav.classList.remove('scrolled');
-      }
-    });
 
 
-// Intersection Observer for animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -100px 0px'
-    };
+      // Intersection Observer for animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+      };
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-          observer.unobserve(entry.target);
-        }
-      });
-    }, observerOptions);
-
-    document.querySelectorAll('.feature, .spec-card, .download-card, .section-title').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(60px)';
-      el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-      observer.observe(el);
-    });
-
-    // Separate observer for content sections with staggered children
-    document.querySelectorAll('.content-section').forEach(section => {
-      const children = section.querySelectorAll('.section-content, .section-image');
-      children.forEach((child, index) => {
-        child.style.opacity = '0';
-        child.style.transform = 'translateY(60px)';
-        child.style.transition = `opacity 0.8s ease ${index * 0.2}s, transform 0.8s ease ${index * 0.2}s`;
-      });
-      
-      const sectionObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            children.forEach(child => {
-              child.style.opacity = '1';
-              child.style.transform = 'translateY(0)';
-            });
-            sectionObserver.unobserve(entry.target);
+      const observer = new IntersectionObserver((entries) =>
+      {
+        entries.forEach(entry =>
+        {
+          if (entry.isIntersecting)
+          {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+            observer.unobserve(entry.target);
           }
         });
       }, observerOptions);
-      
-      sectionObserver.observe(section);
-    });
+
+      document.querySelectorAll('.feature, .spec-card, .download-card, .section-title').forEach(el =>
+      {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(60px)';
+        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        observer.observe(el);
+      });
+
+      // Separate observer for content sections with staggered children
+      document.querySelectorAll('.content-section').forEach(section =>
+      {
+        const children = section.querySelectorAll('.section-content, .section-image');
+        children.forEach((child, index) =>
+        {
+          child.style.opacity = '0';
+          child.style.transform = 'translateY(60px)';
+          child.style.transition = `opacity 0.8s ease ${index * 0.2}s, transform 0.8s ease ${index * 0.2}s`;
+        });
+
+        const sectionObserver = new IntersectionObserver((entries) =>
+        {
+          entries.forEach(entry =>
+          {
+            if (entry.isIntersecting)
+            {
+              children.forEach(child =>
+              {
+                child.style.opacity = '1';
+                child.style.transform = 'translateY(0)';
+              });
+              sectionObserver.unobserve(entry.target);
+            }
+          });
+        }, observerOptions);
+
+        sectionObserver.observe(section);
+      });
 
 
-    // Modal functionality
-    const windowsDownloadBtn = document.getElementById('windowsDownload');
-    const linuxDownloadBtn = document.getElementById('linuxDownload');
-    const windowsModal = document.getElementById('windowsModal');
-    const linuxModal = document.getElementById('linuxModal');
-    const windowsCloseBtn = document.querySelector('.windows-close');
-    const linuxCloseBtn = document.querySelector('.linux-close');
-    
-    windowsDownloadBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      windowsModal.style.display = 'block';
-    });
-    
-    linuxDownloadBtn.addEventListener('click', function(e) {
-      e.preventDefault();
-      linuxModal.style.display = 'block';
-    });
-    
-    windowsCloseBtn.addEventListener('click', function() {
-      windowsModal.style.display = 'none';
-    });
-    
-    linuxCloseBtn.addEventListener('click', function() {
-      linuxModal.style.display = 'none';
-    });
-    
-    window.addEventListener('click', function(e) {
-      if (e.target === windowsModal) {
+      // Modal functionality
+      const windowsDownloadBtn = document.getElementById('windowsDownload');
+      const linuxDownloadBtn = document.getElementById('linuxDownload');
+      const windowsModal = document.getElementById('windowsModal');
+      const linuxModal = document.getElementById('linuxModal');
+      const windowsCloseBtn = document.querySelector('.windows-close');
+      const linuxCloseBtn = document.querySelector('.linux-close');
+
+      windowsDownloadBtn.addEventListener('click', function (e)
+      {
+        e.preventDefault();
+        windowsModal.style.display = 'block';
+      });
+
+      linuxDownloadBtn.addEventListener('click', function (e)
+      {
+        e.preventDefault();
+        linuxModal.style.display = 'block';
+      });
+
+      windowsCloseBtn.addEventListener('click', function ()
+      {
         windowsModal.style.display = 'none';
-      }
-      if (e.target === linuxModal) {
+      });
+
+      linuxCloseBtn.addEventListener('click', function ()
+      {
         linuxModal.style.display = 'none';
-      }
-    });
-  </script>
-</body>
+      });
+
+      window.addEventListener('click', function (e)
+      {
+        if (e.target === windowsModal)
+        {
+          windowsModal.style.display = 'none';
+        }
+        if (e.target === linuxModal)
+        {
+          linuxModal.style.display = 'none';
+        }
+      });
+    </script>
+  </body>
+
 </html>
