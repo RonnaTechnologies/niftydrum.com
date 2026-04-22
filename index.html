@@ -504,6 +504,14 @@
         }
       }
 
+
+      .webapp {
+        padding: 2rem 5%;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+
       /* Features Section */
       .features {
         padding: 8rem 5%;
@@ -1152,7 +1160,7 @@
         <p>Connect up to 9 piezos and 1 FSR. Get real-time MIDI over USB.</p>
         <p>Flawless performance with ultra-low latency.</p>
         <div class="cta-buttons">
-          <a href="#software" class="btn btn-primary">Download Software</a>
+          <a href="#software" class="btn btn-primary" id="dl-button">Download Software</a>
           <a href="#specs" class="btn btn-secondary">View Specs</a>
         </div>
       </div>
@@ -1210,7 +1218,10 @@
 
     <section class="software" id="software">
       <div class="software-content">
-        <h2 class="section-title">Download Software</h2>
+        <h2 class="section-title">Software</h2>
+        <div class="webapp" id="webapp-button">
+          <a href="https://app.niftydrum.com" class="btn btn-primary">Use the app in your Browser</a>
+        </div>
         <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 800px; margin: 0 auto 3rem;">Get the official
           NiftyDrum configuration software for your operating system. Configure your triggers, map MIDI notes, and
           fine-tune velocity curves with our intuitive interface.</p>
@@ -1366,6 +1377,19 @@
       </div>
     </div>
 
+    <script>
+      const dl_button = document.getElementById("dl-button")
+      const has_serial = 'serial' in navigator
+
+      if (has_serial)
+      {
+        dl_button.innerHTML = 'Try / Download Software'
+      }
+      else
+      {
+        document.getElementById('webapp-button').style.display = 'none'
+      }
+    </script>
     <script>
       // Smooth scrolling
       document.querySelectorAll('a[href^="#"]').forEach(anchor =>
