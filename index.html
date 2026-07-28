@@ -1,1524 +1,1148 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NiftyDrum – Real-time MIDI Trigger Module</title>
-    <meta name="description"
-      content="NiftyDrum: Real-time MIDI Trigger Module. Connect up to 9 piezos and 1 FSR. Get real-time MIDI over USB.">
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style"
-      onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    </noscript>
-    <style>
-      @font-face {
-        font-family: 'SourceSansPro';
-        src: url('SourceSansPro.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NiftyDrum – Real-time MIDI & Sound Trigger Platform</title>
+  <meta name="description"
+    content="NiftyDrum: The ultimate MIDI and Sound Trigger Platform. Connect up to 9 piezos and 1 FSR. Build custom instruments with our Arduino SDKs.">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  </noscript>
+  <style>
+    @font-face {
+      font-family: 'SourceSansPro';
+      src: url('SourceSansPro.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'SourceSansPro', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-      }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'SourceSansPro', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    }
 
+    :root {
+      --primary: #004eff;
+      --primary-light: #3d7aff;
+      --primary-glow: rgba(0, 78, 255, 0.4);
+      --primary-dark: #0038d4;
+      --dark: #05050a;
+      --dark-lighter: #0d0d14;
+      --dark-card: #101018;
+      --text: #ffffff;
+      --text-muted: #a0a0b0;
+      --card-border: rgba(255, 255, 255, 0.07);
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--dark);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: transparent;
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: color 0.3s ease;
+    }
+
+    .bg-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: radial-gradient(ellipse at 50% -10%, rgba(0, 78, 255, 0.12) 0%, transparent 55%),
+                  radial-gradient(ellipse at 80% 80%, rgba(0, 40, 180, 0.05) 0%, transparent 40%),
+                  linear-gradient(180deg, #05050a 0%, #0a0a12 50%, #05050a 100%);
+    }
+
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.4;
+      background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at 50% 30%, black 0%, transparent 70%);
+    }
+
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      padding: 1.1rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      background: rgba(5, 5, 10, 0.6);
+      backdrop-filter: blur(16px) saturate(1.4);
+      -webkit-backdrop-filter: blur(16px) saturate(1.4);
+      border-bottom: 1px solid var(--card-border);
+      transition: all 0.4s var(--ease-out-expo);
+    }
+
+    nav.scrolled {
+      padding: 0.75rem 5%;
+      background: rgba(5, 5, 10, 0.88);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      font-size: 1.7rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #004eff, #ffffff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+      transition: transform 0.3s var(--ease-spring);
+      cursor: default;
+    }
+
+    .logo:hover { transform: scale(1.04); }
+
+    .nav-links {
+      display: flex;
+      gap: 2.2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.92rem;
+      transition: color 0.3s ease;
+      position: relative;
+      padding: 0.25rem 0;
+      letter-spacing: 0.01em;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%) scaleX(0);
+      width: 100%;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+      transition: transform 0.35s var(--ease-out-expo);
+    }
+
+    .nav-links a:hover::after {
+      transform: translateX(-50%) scaleX(1);
+    }
+
+    .burger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 26px;
+      height: 18px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      z-index: 1002;
+    }
+
+    .burger-line {
+      width: 100%;
+      height: 2px;
+      background-color: var(--text);
+      border-radius: 2px;
+      transition: all 0.35s var(--ease-out-expo);
+      transform-origin: center;
+    }
+
+    .burger.active .burger-line:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .burger.active .burger-line:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .burger.active .burger-line:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    .nav-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+
+    .nav-overlay.active { opacity: 1; pointer-events: all; }
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      padding-top: 120px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      max-width: 860px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .hero-image {
+      max-width: 420px;
+      width: 100%;
+      margin: 0 auto 2.5rem;
+      animation: fadeInUp 0.9s var(--ease-out-expo);
+    }
+
+    .hero-image img {
+      width: 100%;
+      transition: transform 0.6s var(--ease-spring);
+    }
+
+    .hero-image img:hover { transform: scale(1.03) rotate(0.4deg); }
+
+    @media (prefers-color-scheme: dark) {
+      .hero-image img { mix-blend-mode: screen; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #004eff 0%, #e0e4f0 70%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      animation: fadeInUp 0.9s var(--ease-out-expo) 0.15s backwards;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+      animation: fadeInUp 0.9s var(--ease-out-expo) 0.3s backwards;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.9s var(--ease-out-expo) 0.45s backwards;
+      margin-top: 2.5rem;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn {
+      padding: 1rem 2.4rem;
+      border: none;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.4s var(--ease-out-expo);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      letter-spacing: 0.01em;
+    }
+
+    .btn:active { transform: translateY(-1px) scale(0.97); }
+    .btn:focus-visible { outline: 3px solid var(--primary); outline-offset: 3px; }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0050ff 0%, #0038d4 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 28px rgba(0, 78, 255, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -70%;
+      width: 50%;
+      height: 200%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+      transform: skewX(-20deg);
+      transition: left 0.7s var(--ease-out-expo);
+    }
+
+    .btn-primary:hover::after { left: 130%; }
+
+    .btn-primary:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 18px 50px rgba(0, 78, 255, 0.4), 0 0 30px rgba(0, 78, 255, 0.15), inset 0 1px 0 rgba(255,255,255,0.15);
+      background: linear-gradient(135deg, #1a60ff 0%, #0044e8 100%);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(0, 78, 255, 0.08);
+      border-color: rgba(0, 78, 255, 0.5);
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 14px 35px rgba(0, 78, 255, 0.12);
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      margin-bottom: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      background: linear-gradient(135deg, #004eff, #d0d4e0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 1.08rem;
+      max-width: 680px;
+      margin: 0 auto 4rem;
+      line-height: 1.7;
+    }
+
+    .features {
+      padding: 7rem 5%;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .feature {
+      background: var(--dark-card);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      transition: all 0.45s var(--ease-out-expo);
+      border: 1px solid var(--card-border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(160deg, rgba(0,78,255,0.4), transparent 40%, transparent 60%, rgba(0,78,255,0.2));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.45s ease;
+    }
+
+    .feature:hover::before { opacity: 1; }
+
+    .feature:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25), 0 0 50px rgba(0, 78, 255, 0.06);
+    }
+
+    .feature-icon {
+      font-size: 2.4rem;
+      margin-bottom: 1.4rem;
+      color: var(--primary);
+      text-shadow: 0 0 20px var(--primary-glow);
+      transition: transform 0.45s var(--ease-spring), text-shadow 0.45s ease;
+    }
+
+    .feature:hover .feature-icon {
+      transform: scale(1.2) translateY(-4px);
+      text-shadow: 0 0 30px var(--primary-glow), 0 0 60px rgba(0,78,255,0.15);
+    }
+
+    .feature h3 { font-size: 1.2rem; margin-bottom: 0.8rem; color: var(--text); font-weight: 700; }
+    .feature p { font-size: 0.95rem; color: var(--text-muted); line-height: 1.6; }
+
+    .content-section {
+      padding: 6rem 5%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .content-section.reverse { grid-template-columns: 1.2fr 0.8fr; }
+
+    .content-section.reverse .section-image {
+      order: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .content-section.reverse .section-content { order: 1; }
+
+    .content-section.reverse .section-image img {
+      width: auto;
+      max-width: 100%;
+      max-height: 520px;
+      object-fit: contain;
+    }
+
+    .section-content h2 {
+      font-size: clamp(1.9rem, 3.5vw, 2.6rem);
+      margin-bottom: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      background: linear-gradient(135deg, #004eff, #d0d4e0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-content p { color: var(--text-muted); margin-bottom: 1.2rem; font-size: 1.05rem; line-height: 1.7; }
+    .section-content ul { list-style: none; margin-top: 1.8rem; }
+
+    .section-content ul li {
+      margin-bottom: 1rem;
+      padding-left: 2rem;
+      position: relative;
+      color: var(--text-muted);
+      font-size: 1rem;
+      transition: transform 0.3s var(--ease-out-expo), color 0.3s ease;
+    }
+
+    .section-content ul li:hover { transform: translateX(6px); color: var(--text); }
+
+    .section-content ul li:before {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-size: 1rem;
+      transition: transform 0.3s var(--ease-spring);
+    }
+
+    .section-content ul li:hover:before { transform: scale(1.25); }
+
+    .section-image img {
+      width: 100%;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+      transition: transform 0.5s var(--ease-out-expo), box-shadow 0.5s ease;
+      border: 1px solid var(--card-border);
+    }
+
+    .section-image:hover img {
+      transform: scale(1.025) rotate(0.3deg);
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.35), 0 0 50px rgba(0, 78, 255, 0.06);
+    }
+
+    .sdk-section { padding: 8rem 5%; position: relative; }
+
+    .sdk-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(0, 78, 255, 0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .sdk-section .download-cards {
+      margin-top: 3rem;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .sdk-card {
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      padding: 2.5rem;
+      background: linear-gradient(160deg, var(--dark-card) 0%, rgba(0, 78, 255, 0.03) 100%) !important;
+      border: 1px solid rgba(0, 78, 255, 0.12) !important;
+      border-radius: var(--radius-lg) !important;
+      transition: all 0.5s var(--ease-out-expo);
+      overflow: hidden;
+    }
+
+    .sdk-card::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      right: -1px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at top right, rgba(0, 78, 255, 0.12), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+
+    .sdk-card:hover::after { opacity: 1; }
+
+    .sdk-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(0, 78, 255, 0.35) !important;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 78, 255, 0.1);
+    }
+
+    .sdk-header { display: flex; align-items: center; gap: 1.1rem; margin-bottom: 1.2rem; width: 100%; }
+
+    .sdk-icon-wrapper {
+      width: 56px; height: 56px; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, rgba(0, 78, 255, 0.14), rgba(0, 78, 255, 0.04));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; color: var(--primary);
+      border: 1px solid rgba(0, 78, 255, 0.18);
+      flex-shrink: 0; transition: all 0.45s var(--ease-spring);
+    }
+
+    .sdk-card:hover .sdk-icon-wrapper {
+      transform: scale(1.1) rotate(-4deg);
+      box-shadow: 0 8px 24px rgba(0, 78, 255, 0.2);
+    }
+
+    .sdk-title-group h3 { margin: 0 0 0.15rem 0; font-size: 1.25rem; font-weight: 700; color: var(--text); }
+    .sdk-subtitle { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.6px; text-transform: uppercase; opacity: 0.8; }
+    .sdk-desc { color: var(--text-muted); font-size: 0.92rem; line-height: 1.65; margin-bottom: 1.5rem; }
+    .sdk-details { display: grid; grid-template-columns: 1fr; gap: 0.7rem; margin: 0 0 2rem; width: 100%; }
+
+    .sdk-detail-item {
+      display: flex; align-items: flex-start; gap: 0.9rem; padding: 0.9rem 1rem;
+      background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-sm);
+      border: 1px solid var(--card-border); transition: all 0.35s var(--ease-out-expo); text-align: left;
+    }
+
+    .sdk-detail-item div { text-align: left; }
+    .sdk-detail-item:hover { background: rgba(0, 78, 255, 0.05); border-color: rgba(0, 78, 255, 0.2); transform: translateX(5px); }
+    .sdk-detail-item i { color: var(--primary); font-size: 1rem; margin-top: 0.2rem; width: 18px; text-align: center; flex-shrink: 0; transition: transform 0.3s var(--ease-spring); }
+    .sdk-detail-item:hover i { transform: scale(1.2); }
+    .sdk-detail-item strong { display: block; font-size: 0.88rem; color: var(--text); margin-bottom: 0.1rem; font-weight: 600; }
+    .sdk-detail-item span { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+
+    .sdk-cta {
+      margin-top: auto; align-self: stretch;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 1rem 1.8rem;
+      background: linear-gradient(135deg, rgba(0, 78, 255, 0.12) 0%, rgba(0, 78, 255, 0.04) 100%);
+      color: #4d8bff; border: 1.5px solid rgba(0, 78, 255, 0.25); border-radius: var(--radius-sm);
+      font-weight: 600; font-size: 0.9rem; transition: all 0.4s var(--ease-out-expo);
+      text-decoration: none; position: relative; overflow: hidden;
+    }
+
+    .sdk-cta::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #0050ff 0%, #0038d4 100%); opacity: 0; transition: opacity 0.4s ease; }
+    .sdk-cta::after { content: ''; position: absolute; top: -50%; left: -70%; width: 50%; height: 200%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); transform: skewX(-20deg); transition: left 0.6s var(--ease-out-expo); }
+    .sdk-cta:hover::before { opacity: 1; }
+    .sdk-cta:hover::after { left: 130%; }
+    .sdk-cta:hover { color: #ffffff; border-color: transparent; transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0, 78, 255, 0.3); }
+    .sdk-cta:active { transform: translateY(-1px) scale(0.98); }
+    .sdk-cta > * { position: relative; z-index: 1; }
+    .sdk-cta .cta-arrow { transition: transform 0.35s var(--ease-spring); font-size: 0.8rem; }
+    .sdk-cta:hover .cta-arrow { transform: translateX(4px); }
+
+    .software { padding: 8rem 5%; max-width: 1300px; margin: 0 auto; }
+    .software .webapp { text-align: center; margin-bottom: 2.5rem; }
+    .download-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+
+    .download-card {
+      background: var(--dark-card); border-radius: var(--radius-lg); padding: 2.5rem 2rem;
+      text-align: center; transition: all 0.45s var(--ease-out-expo);
+      border: 1px solid var(--card-border); position: relative; overflow: hidden;
+    }
+
+    .download-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, var(--primary), var(--primary-light)); transition: height 0.3s ease; }
+    .download-card:hover::before { height: 4px; }
+    .download-card.windows::before { background: linear-gradient(90deg, #0078d7, #00a4ef); }
+    .download-card.mac::before { background: linear-gradient(90deg, #666, #999); }
+    .download-card.linux::before { background: linear-gradient(90deg, #f7931e, #ffb347); }
+    .download-card:hover { transform: translateY(-10px); border-color: rgba(0, 78, 255, 0.3); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25); }
+    .download-card-icon { font-size: 2.8rem; margin-bottom: 1.3rem; color: var(--primary); transition: transform 0.45s var(--ease-spring); }
+    .download-card:hover .download-card-icon { transform: scale(1.15) translateY(-4px); }
+    .download-card.windows .download-card-icon { color: #0078d7; }
+    .download-card.linux .download-card-icon { color: #f7931e; }
+    .download-card.mac .download-card-icon { color: var(--text-muted); }
+    .download-card h3 { font-size: 1.3rem; margin-bottom: 0.8rem; color: var(--text); font-weight: 700; }
+    .download-card p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.8rem; min-height: 44px; }
+
+    .download-link {
+      display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.8rem;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white; border-radius: var(--radius-sm); font-weight: 600; font-size: 0.9rem;
+      transition: all 0.4s var(--ease-out-expo); text-decoration: none;
+      box-shadow: 0 6px 20px rgba(0, 78, 255, 0.2); position: relative; overflow: hidden;
+    }
+
+    .download-link::after { content: ''; position: absolute; top: -50%; left: -70%; width: 50%; height: 200%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent); transform: skewX(-20deg); transition: left 0.6s var(--ease-out-expo); }
+    .download-link:hover::after { left: 130%; }
+    .download-card.windows .download-link { background: linear-gradient(135deg, #0078d7, #005a9e); box-shadow: 0 6px 20px rgba(0, 120, 215, 0.2); }
+    .download-card.linux .download-link { background: linear-gradient(135deg, #f7931e, #d35400); box-shadow: 0 6px 20px rgba(247, 147, 30, 0.2); }
+    .download-card.mac .download-link { background: var(--text); color: var(--dark) !important; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); }
+    .download-link:hover { transform: translateY(-4px) scale(1.04); filter: brightness(1.08); box-shadow: 0 14px 35px rgba(0, 78, 255, 0.3); }
+    .download-card.windows .download-link:hover { box-shadow: 0 14px 35px rgba(0, 120, 215, 0.3); }
+    .download-card.linux .download-link:hover { box-shadow: 0 14px 35px rgba(247, 147, 30, 0.3); }
+    .download-link:active { transform: translateY(-1px) scale(0.98); }
+
+    .specs { padding: 8rem 5%; max-width: 1300px; margin: 0 auto; }
+    .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .spec-card { background: var(--dark-card); border-radius: var(--radius-lg); padding: 2.2rem; border: 1px solid var(--card-border); transition: all 0.4s var(--ease-out-expo); }
+    .spec-card:hover { transform: translateY(-8px); border-color: rgba(0, 78, 255, 0.25); box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2); }
+    .spec-card h3 { font-size: 1.25rem; margin-bottom: 1.3rem; color: var(--text); display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .spec-card h3 i { color: var(--primary); transition: transform 0.35s var(--ease-spring); }
+    .spec-card:hover h3 i { transform: scale(1.2) rotate(-5deg); }
+    .spec-card ul { list-style: none; }
+    .spec-card ul li { padding: 0.85rem 0; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; transition: all 0.3s ease; font-size: 0.92rem; }
+    .spec-card ul li:hover { padding-left: 6px; }
+    .spec-card ul li:last-child { border-bottom: none; }
+    .spec-card ul li span:first-child { font-weight: 600; color: var(--text); }
+    .spec-card ul li span:last-child { color: var(--text-muted); }
+
+    footer { padding: 5rem 5% 3rem; border-top: 1px solid var(--card-border); text-align: center; }
+    .social-links { display: flex; gap: 1.2rem; justify-content: center; margin-bottom: 2rem; }
+    .social-links a { width: 46px; height: 46px; border-radius: 14px; background: var(--dark-card); display: flex; align-items: center; justify-content: center; transition: all 0.4s var(--ease-spring); border: 1px solid var(--card-border); color: var(--text-muted); font-size: 1.15rem; position: relative; overflow: hidden; }
+    .social-links a::before { content: ''; position: absolute; inset: 0; background: var(--primary); transform: scale(0); border-radius: inherit; transition: transform 0.4s var(--ease-spring); }
+    .social-links a:hover::before { transform: scale(1); }
+    .social-links a i { position: relative; z-index: 1; transition: transform 0.3s var(--ease-spring); }
+    .social-links a:hover { color: #ffffff; transform: translateY(-5px) scale(1.08); border-color: var(--primary); box-shadow: 0 12px 28px var(--primary-glow); }
+    .social-links a:hover i { transform: scale(1.1); }
+    .social-links a:active { transform: translateY(-2px) scale(1.0); }
+    footer p { color: var(--text-muted); margin: 0.4rem 0; font-size: 0.92rem; }
+    footer a { color: #4d8bff; text-decoration: none; font-weight: 600; transition: all 0.3s ease; position: relative; }
+    footer a::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1.5px; background: #4d8bff; transition: width 0.3s var(--ease-out-expo); }
+    footer a:hover { color: var(--text); }
+    footer a:hover::after { width: 100%; }
+
+    .modal { display: none; position: fixed; z-index: 2000; inset: 0; background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(10px); }
+    .modal-content { background: var(--dark-card); margin: 8% auto; padding: 2.5rem; border-radius: var(--radius-lg); width: 90%; max-width: 480px; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5); position: relative; animation: modalIn 0.4s var(--ease-out-expo); border: 1px solid var(--card-border); }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(-24px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .close { position: absolute; right: 1.2rem; top: 1.2rem; color: var(--text-muted); font-size: 22px; cursor: pointer; transition: all 0.3s var(--ease-spring); width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border-radius: 10px; }
+    .close:hover { color: var(--text); background: rgba(255, 255, 255, 0.06); transform: rotate(90deg); }
+    .modal-title { text-align: center; font-size: 1.4rem; margin-bottom: 1.8rem; color: var(--text); display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; }
+    .modal-info { background: rgba(0, 78, 255, 0.06); border: 1px solid rgba(0, 78, 255, 0.15); border-radius: var(--radius-sm); padding: 1.3rem; margin-bottom: 1.8rem; font-size: 0.9rem; line-height: 1.6; color: var(--text-muted); }
+    .modal-info strong { color: var(--text); }
+    .modal-info code { background: rgba(255, 255, 255, 0.08); padding: 3px 8px; border-radius: 6px; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.85rem; color: #00c6ff; }
+    .modal-info a { color: #4d8bff; text-decoration: none; font-weight: 600; }
+    .modal-info a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .modal-links { list-style: none; }
+    .modal-link-item { margin-bottom: 0.8rem; background: rgba(255, 255, 255, 0.02); border-radius: var(--radius-sm); transition: all 0.3s var(--ease-out-expo); border: 1px solid var(--card-border); overflow: hidden; }
+    .modal-link-item:hover { background: rgba(0, 78, 255, 0.08); transform: translateX(4px); border-color: rgba(0, 78, 255, 0.3); }
+    .modal-link-content { display: flex; align-items: center; padding: 1rem 1.3rem; text-decoration: none; color: inherit; }
+    .modal-link-icon { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; margin-right: 0.9rem; font-size: 1.3rem; color: var(--primary); transition: transform 0.3s var(--ease-spring); }
+    .modal-link-item:hover .modal-link-icon { transform: scale(1.15); }
+    .modal-link-text { font-size: 1rem; font-weight: 600; flex: 1; color: var(--text); }
+    .modal-link-arrow { color: var(--primary); font-size: 1rem; transition: transform 0.3s var(--ease-spring); }
+    .modal-link-item:hover .modal-link-arrow { transform: translateX(5px); }
+
+    @media (max-width: 968px) {
+      .content-section, .content-section.reverse { grid-template-columns: 1fr; gap: 3rem; }
+      .content-section.reverse .section-image, .content-section.reverse .section-content { order: unset; }
+      .content-section.reverse .section-image img { max-height: 400px; }
+    }
+
+    @media (max-width: 768px) {
+      .burger { display: flex; }
+      .nav-links { position: fixed; top: 0; right: -100%; width: 75%; max-width: 300px; height: 100vh; background: var(--dark-card); flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem; transition: right 0.4s var(--ease-out-expo); box-shadow: -10px 0 40px rgba(0,0,0,0.4); z-index: 1000; border-left: 1px solid var(--card-border); padding: 2rem; }
+      .nav-links.active { right: 0; }
+      .nav-links a { font-size: 1.2rem; width: 100%; text-align: center; }
+      nav { padding: 1rem 4%; }
+      .hero { padding-top: 100px; }
+      .cta-buttons { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
+      .features, .software, .specs, .content-section, .sdk-section { padding: 4rem 5%; }
+      .sdk-section .download-cards { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .modal-content { margin: 15% auto; padding: 1.5rem; }
+    }
+
+    /* ===== LIGHT THEME — placed AFTER all base styles to win specificity ===== */
+    @media (prefers-color-scheme: light) {
       :root {
-        --primary: #004dff;
-        --primary-dark: #0008cc;
-        --secondary: #ffffff;
-        --dark: #0a0a0a;
-        --dark-lighter: #1a1a1a;
-        --text: #ffffff;
-        --text-muted: #a0a0a0;
+        --dark: #ffffff;
+        --dark-lighter: #f8fafc;
+        --dark-card: #ffffff;
+        --text: #0f172a;
+        --text-muted: #475569;
+        --card-border: rgba(0, 0, 0, 0.07);
       }
 
-      /* Light theme colors */
-      @media (prefers-color-scheme: light) {
-        :root {
-          --dark: #ffffff;
-          --dark-lighter: #f5f5f5;
-          --text: #0a0a0a;
-          --text-muted: #666666;
-        }
+      html { background: #ffffff; }
+      body { background: transparent; color: #0f172a; }
 
-        body {
-          background: #ffffff;
-          color: #0a0a0a;
-        }
-
-
-
-        .bg-gradient {
-          background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 50%, #ffffff 100%) !important;
-        }
-
-        nav {
-          background: rgba(255, 255, 255, 0.7) !important;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
-        }
-
-        nav.scrolled {
-          background: rgba(255, 255, 255, 0.85) !important;
-        }
-
-        .nav-links a {
-          color: #0a0a0a;
-        }
-
-        .logo {
-          font-size: 1.8rem;
-          font-weight: normal !important;
-          /* Change this from 900 */
-          background: linear-gradient(135deg, #004dff, var(--text));
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .hero h1 {
-          background: linear-gradient(135deg, #004dff 0%, #0a0a0a 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .section-title {
-          background: linear-gradient(135deg, #004dff, #0a0a0a);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .section-content h2 {
-          background: linear-gradient(135deg, #004dff, #0a0a0a);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .hero-image img {
-          box-shadow: 0 30px 60px rgba(0, 16, 255, 0.15);
-        }
-
-
-
-        .hero p {
-          color: #666666;
-        }
-
-        .btn-primary {
-          color: #ffffff !important;
-        }
-
-        .download-link {
-          color: #ffffff !important;
-        }
-
-        .feature {
-          background: #ffffff !important;
-          border: 1px solid rgba(0, 0, 0, 0.1) !important;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .feature:hover {
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
-
-        .feature h3 {
-          color: #0a0a0a;
-        }
-
-        .feature p {
-          color: #666666;
-        }
-
-        .section-content p {
-          color: #666666;
-        }
-
-        .section-content ul li {
-          color: #666666;
-        }
-
-        .section-image img {
-          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
-        }
-
-        .download-card {
-          background: #ffffff !important;
-          border: 1px solid rgba(0, 0, 0, 0.1) !important;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .download-card:hover {
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
-
-        .download-card h3 {
-          color: #0a0a0a;
-        }
-
-        .download-card p {
-          color: #666666;
-        }
-
-        .spec-card {
-          background: #ffffff !important;
-          border: 1px solid rgba(0, 0, 0, 0.1) !important;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .spec-card:hover {
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
-
-        .spec-card h3 {
-          color: #0a0a0a;
-        }
-
-        .spec-card ul li span:first-child {
-          color: #0a0a0a;
-        }
-
-        .spec-card ul li span:last-child {
-          color: #666666;
-        }
-
-        .spec-card ul li {
-          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-        }
-
-        footer {
-          border-top: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        footer p {
-          color: #666666;
-        }
-
-        .social-links a {
-          background: #f5f5f5 !important;
-          border: 1px solid rgba(0, 0, 0, 0.1);
-          color: #666666;
-        }
-
-        .modal {
-          background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-          background: #ffffff !important;
-          border: 1px solid rgba(0, 0, 0, 0.1);
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-        }
-
-        .close {
-          color: #666666;
-        }
-
-        .close:hover {
-          color: #0a0a0a;
-        }
-
-        .modal-title {
-          color: #0a0a0a;
-        }
-
-        .modal-info {
-          background: rgba(0, 16, 255, 0.05);
-          border: 1px solid rgba(0, 16, 255, 0.2);
-          color: #666666;
-        }
-
-        .modal-info strong {
-          color: #0a0a0a;
-        }
-
-        .modal-info code {
-          background: rgba(0, 16, 255, 0.1);
-          color: #004dff;
-        }
-
-        .modal-link-item {
-          background: rgba(0, 16, 255, 0.03) !important;
-          border: 1px solid rgba(0, 16, 255, 0.15) !important;
-        }
-
-        .modal-link-item:hover {
-          background: rgba(0, 16, 255, 0.08) !important;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .modal-link-text {
-          color: #0a0a0a;
-        }
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        background: var(--dark);
-        color: var(--text);
-        line-height: 1.6;
-        overflow-x: hidden;
-        transition: background-color 0.3s ease, color 0.3s ease;
-      }
-
-      /* Animated gradient background */
       .bg-gradient {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
-        animation: gradientShift 15s ease infinite;
+        background: radial-gradient(circle at 50% 0%, rgba(0, 78, 255, 0.08) 0%, transparent 60%),
+                    linear-gradient(135deg, #ffffff 0%, #f0f6ff 50%, #e8f0ff 100%) !important;
       }
 
-      @keyframes gradientShift {
+      .bg-grid { opacity: 0.25; }
 
-        0%,
-        100% {
-          opacity: 1;
-        }
+      nav { background: rgba(255, 255, 255, 0.75) !important; border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important; }
+      nav.scrolled { background: rgba(255, 255, 255, 0.92) !important; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06); }
+      .nav-links a { color: #0f172a; }
 
-        50% {
-          opacity: 0.8;
-        }
-      }
-
-      /* Navigation */
-      nav {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        padding: 1.5rem 5%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        z-index: 1000;
-        background: rgba(10, 10, 10, 0.7);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-      }
-
-      nav.scrolled {
-        padding: 1rem 5%;
-        background: rgba(10, 10, 10, 0.85);
-      }
-
+      /* Logo: blue → black */
       .logo {
-        font-size: 1.8rem;
-        font-weight: normal !important;
-        background: linear-gradient(135deg, #004dff, var(--text));
+        background: linear-gradient(135deg, #004eff, #000000);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
 
-      .nav-links {
-        display: flex;
-        gap: 2rem;
-        list-style: none;
-      }
-
-      .nav-links a {
-        color: var(--text);
-        text-decoration: none;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        position: relative;
-      }
-
-      .nav-links a::after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: var(--primary);
-        transition: width 0.3s ease;
-      }
-
-      .nav-links a:hover::after {
-        width: 100%;
-      }
-
-      /* Hero Section */
-      .hero {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 2rem;
-        padding-top: 120px;
-        position: relative;
-        overflow: hidden;
-        background: transparent;
-      }
-
-      .hero-decoration {
-        position: absolute;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #004dff, #ffffff);
-        opacity: 0.1;
-        animation: float 6s ease-in-out infinite;
-      }
-
-      .deco-1 {
-        width: 300px;
-        height: 300px;
-        top: 10%;
-        left: 5%;
-        animation-delay: 0s;
-      }
-
-      .deco-2 {
-        width: 200px;
-        height: 200px;
-        bottom: 20%;
-        right: 10%;
-        animation-delay: 2s;
-      }
-
-      @keyframes float {
-
-        0%,
-        100% {
-          transform: translateY(0) rotate(0deg);
-        }
-
-        50% {
-          transform: translateY(-20px) rotate(180deg);
-        }
-      }
-
-      .hero-content {
-        max-width: 900px;
-        z-index: 2;
-        position: relative;
-      }
-
-      .hero-image {
-        max-width: 500px;
-        width: 100%;
-        margin: 0 auto 2rem;
-        animation: fadeInUp 0.8s ease;
-        background: transparent;
-      }
-
-      .hero-image img {
-        width: 100%;
-        border-radius: 20px;
-        box-shadow: 0 30px 60px rgba(0, 16, 255, 0.0);
-        transition: transform 0.3s ease;
-      }
-
-      .hero-image img:hover {
-        transform: scale(1.02);
-      }
-
+      /* Titles: blue → black */
       .hero h1 {
-        font-size: clamp(2.5rem, 4vw, 3rem);
-        font-weight: normal !important;
-        margin-bottom: 1.5rem;
-        background: linear-gradient(135deg, #004dff 0%, var(--text) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: fadeInUp 0.8s ease 0.2s backwards;
-      }
-
-      .hero p {
-        font-size: 1.25rem;
-        color: var(--text-muted);
-        margin-bottom: 1.5rem;
-        animation: fadeInUp 0.8s ease 0.4s backwards;
-      }
-
-      .cta-buttons {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
-        animation: fadeInUp 0.8s ease 0.6s backwards;
-        margin-top: 2rem;
-      }
-
-      .btn {
-        padding: 1rem 2.5rem;
-        border: none;
-        border-radius: 50px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-      }
-
-      .btn-primary {
-        background: linear-gradient(135deg, #004dff, #0008cc);
-        color: var(--text);
-        box-shadow: 0 10px 30px rgba(0, 16, 255, 0.3);
-      }
-
-      .btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 40px rgba(0, 16, 255, 0.5);
-      }
-
-      .btn-secondary {
-        background: transparent;
-        color: var(--text);
-        border: 2px solid var(--text);
-      }
-
-      .btn-secondary:hover {
-        background: var(--text);
-        color: var(--dark);
-        transform: translateY(-3px);
-      }
-
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-
-      .webapp {
-        padding: 2rem 5%;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-
-      /* Features Section */
-      .features {
-        padding: 8rem 5%;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .section-title {
-        text-align: center;
-        font-size: clamp(2rem, 4vw, 3rem);
-        margin-bottom: 4rem;
-        background: linear-gradient(135deg, #004dff, var(--text));
+        background: linear-gradient(135deg, #004eff 0%, #000000 60%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
 
-      .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 2rem;
-      }
-
-      .feature {
-        background: var(--dark-lighter);
-        border-radius: 20px;
-        padding: 3rem 2rem;
-        text-align: center;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .feature::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, rgba(0, 16, 255, 0.1), rgba(255, 255, 255, 0.05));
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-
-      .feature:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-      }
-
-      .feature:hover::before {
-        opacity: 1;
-      }
-
-      .feature-icon {
-        font-size: 3rem;
-        margin-bottom: 1.5rem;
-        color: #004dff;
-        position: relative;
-        z-index: 1;
-      }
-
-      .feature h3 {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        color: var(--text);
-        position: relative;
-        z-index: 1;
-      }
-
-      .feature p {
-        font-size: 1.05rem;
-        color: var(--text-muted);
-        line-height: 1.7;
-        position: relative;
-        z-index: 1;
-      }
-
-      /* Content Section */
-      .content-section {
-        padding: 8rem 5%;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-        align-items: center;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .content-section.reverse {
-        direction: rtl;
-      }
-
-      .content-section.reverse>* {
-        direction: ltr;
-      }
-
-      .section-content h2 {
-        font-size: clamp(2rem, 4vw, 3rem);
-        margin-bottom: 2rem;
-        background: linear-gradient(135deg, #004dff, var(--text));
+      .section-title, .section-content h2 {
+        background: linear-gradient(135deg, #004eff 0%, #000000 65%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
       }
 
-      .section-content p {
-        color: var(--text-muted);
-        margin-bottom: 1.5rem;
-        font-size: 1.1rem;
-        line-height: 1.8;
-      }
-
-      .section-content ul {
-        list-style: none;
-        margin-top: 2rem;
-      }
-
-      .section-content ul li {
-        margin-bottom: 1rem;
-        padding-left: 2rem;
-        position: relative;
-        color: var(--text-muted);
-        font-size: 1.05rem;
-      }
-
-      /* Ensure Font Awesome is loaded before using its icons */
-      .section-content ul li:before {
-        content: '\f00c';
-        /* Unicode for Font Awesome solid checkmark */
-        font-family: 'Font Awesome 6 Free';
-        /* Correct Font Awesome font family */
-        font-weight: 900;
-        /* Correct font weight for solid icons */
-        position: absolute;
-        left: 0;
-        color: #004dff;
-        font-size: 1.2rem;
-        /* Optional: Add line-height if needed for vertical alignment */
-        /* line-height: 1; */
-      }
-
-      .section-image img {
-        width: 100%;
-        border-radius: 20px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-        transition: transform 0.3s ease;
-      }
-
-      .section-image:hover img {
-        transform: scale(1.02);
-      }
-
-      /* Software Section */
-      .software {
-        padding: 8rem 5%;
-        background: linear-gradient(135deg, rgba(0, 16, 255, 0.05), rgba(255, 255, 255, 0.02));
-      }
-
-      .software-content {
-        max-width: 1400px;
-        margin: 0 auto;
-        text-align: center;
-      }
-
-      .download-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin-top: 3rem;
-      }
-
-      .download-card {
-        background: var(--dark-lighter);
-        border-radius: 20px;
-        padding: 3rem 2rem;
-        text-align: center;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .download-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, #004dff, #ffffff);
-      }
-
-      .download-card.windows::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: #0078d7;
-      }
-
-      .download-card.mac::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: #bbbbbb;
-      }
-
-      .download-card.linux::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: #f7931e;
-      }
-
-      .download-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-      }
-
-      .download-card-icon {
-        font-size: 3rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .download-card.windows .download-card-icon {
-        color: #0078d7;
-      }
-
-      .download-card.linux .download-card-icon {
-        color: var(--text);
-      }
-
-      .download-card h3 {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        color: var(--text);
-      }
-
-      .download-card p {
-        font-size: 1.05rem;
-        color: var(--text-muted);
-        margin-bottom: 2rem;
-      }
-
-      .download-link {
-        display: inline-block;
-        padding: 1rem 2rem;
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        color: white;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        box-shadow: 0 10px 30px rgba(77, 148, 255, 0.3);
-      }
-
-      .download-card.windows .download-link {
-        background: linear-gradient(135deg, #0078d7 0%, #005a9e 100%);
-        box-shadow: 0 10px 30px rgba(0, 120, 215, 0.3);
-      }
-
-      .download-card.linux .download-link {
-        background: linear-gradient(135deg, #f7931e 0%, #d35400 100%);
-        box-shadow: 0 10px 30px rgba(247, 147, 30, 0.3);
-      }
-
-      .download-card.mac .download-link {
-        background: #ffffff;
-        color: black !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      }
-
-      .download-link:hover {
-        transform: translateY(-2px);
-      }
-
-      .download-card.windows .download-link:hover {
-        box-shadow: 0 15px 40px rgba(0, 120, 215, 0.5);
-      }
-
-      .download-card.linux .download-link:hover {
-        box-shadow: 0 15px 40px rgba(247, 147, 30, 0.5);
-      }
-
-      /* Specs Section */
-      .specs {
-        padding: 8rem 5%;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .specs-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-      }
-
-      .spec-card {
-        background: var(--dark-lighter);
-        border-radius: 20px;
-        padding: 2.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-      }
-
-      .spec-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-      }
-
-      .spec-card h3 {
-        font-size: 1.5rem;
-        margin-bottom: 1.5rem;
-        color: var(--text);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .spec-card h3 i {
-        color: #004dff;
-      }
-
-      .spec-card ul {
-        list-style: none;
-      }
-
-      .spec-card ul li {
-        padding: 1rem 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        justify-content: space-between;
-      }
-
-      .spec-card ul li:last-child {
-        border-bottom: none;
-      }
-
-      .spec-card ul li span:first-child {
-        font-weight: 500;
-        color: var(--text);
-      }
-
-      .spec-card ul li span:last-child {
-        color: var(--text-muted);
-      }
-
-      /* Footer */
-      footer {
-        padding: 4rem 5%;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        text-align: center;
-      }
-
-      .social-links {
-        display: flex;
-        gap: 1.5rem;
-        justify-content: center;
-        margin-bottom: 2rem;
-      }
-
-      .social-links a {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: var(--dark-lighter);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--text-muted);
-        font-size: 1.3rem;
-      }
-
-      .social-links a:hover {
-        background: var(--primary);
-        color: var(--text);
-        transform: translateY(-5px);
-        border-color: var(--primary);
-      }
-
-      footer p {
-        color: var(--text-muted);
-        margin: 0.5rem 0;
-      }
-
-      footer a {
-        color: #004dff;
-        text-decoration: none;
-        transition: color 0.3s ease;
-      }
-
-      footer a:hover {
-        color: #ffffff;
-      }
-
-      /* Modal Styles */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(5px);
-      }
-
-      .modal-content {
-        background: var(--dark-lighter);
-        margin: 10% auto;
-        padding: 2.5rem;
-        border-radius: 20px;
-        width: 90%;
-        max-width: 500px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        position: relative;
-        animation: modalFadeIn 0.3s ease-out;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      @keyframes modalFadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .close {
-        position: absolute;
-        right: 1.5rem;
-        top: 1.5rem;
-        color: var(--text-muted);
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: color 0.3s ease;
-      }
-
-      .close:hover {
-        color: var(--text);
-      }
-
-      .modal-title {
-        text-align: center;
-        font-size: 1.8rem;
-        margin-bottom: 2rem;
-        color: var(--text);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-      }
-
-      .modal-info {
-        background: rgba(0, 16, 255, 0.1);
-        border: 1px solid rgba(0, 16, 255, 0.3);
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: var(--text-muted);
-      }
-
-      .modal-info strong {
-        color: var(--text);
-      }
-
-      .modal-info code {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-family: monospace;
-        font-size: 1rem;
-        color: var(--text);
-      }
-
-      .modal-info a {
-        color: #004dff;
-        text-decoration: none;
-      }
-
-      .modal-info a:hover {
-        color: #ffffff;
-      }
-
-      .modal-links {
-        list-style: none;
-      }
-
-      .modal-link-item {
-        margin-bottom: 1rem;
-        background: rgba(0, 16, 255, 0.05);
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(0, 16, 255, 0.2);
-        overflow: hidden;
-      }
-
-      .modal-link-item:hover {
-        background: rgba(0, 16, 255, 0.15);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      }
-
-      .modal-link-content {
-        display: flex;
-        align-items: center;
-        padding: 1rem 1.5rem;
-        text-decoration: none;
-        color: inherit;
-      }
-
-      .modal-link-icon {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 1rem;
-        font-size: 1.5rem;
-        color: #004dff;
-      }
-
-      .modal-link-text {
-        font-size: 1.1rem;
-        font-weight: 600;
-        flex: 1;
-        color: var(--text);
-      }
-
-      .modal-link-arrow {
-        color: #004dff;
-        font-size: 1.2rem;
-        transition: transform 0.3s ease;
-      }
-
-      .modal-link-item:hover .modal-link-arrow {
-        transform: translateX(5px);
-      }
-
-      /* Responsive */
-      @media (max-width: 968px) {
-        .content-section {
-          grid-template-columns: 1fr;
-          gap: 3rem;
-        }
-
-        .content-section.reverse {
-          direction: ltr;
-        }
-      }
+      .btn-primary { box-shadow: 0 10px 30px rgba(0, 78, 255, 0.25); color: #ffffff !important; }
+      .btn-primary:hover { box-shadow: 0 18px 45px rgba(0, 78, 255, 0.35); }
+      .btn-secondary { background: rgba(0, 0, 0, 0.03) !important; border-color: rgba(0, 0, 0, 0.15) !important; color: #0f172a !important; }
+      .btn-secondary:hover { background: rgba(0, 78, 255, 0.06) !important; border-color: rgba(0, 78, 255, 0.4) !important; color: #004eff !important; }
+
+      .feature, .download-card, .spec-card, .modal-content { background: #ffffff !important; border: 1px solid rgba(0, 0, 0, 0.07) !important; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04); }
+      .feature:hover, .download-card:hover, .spec-card:hover { box-shadow: 0 16px 40px rgba(0, 78, 255, 0.1); border-color: rgba(0, 78, 255, 0.25) !important; }
+      .download-link { color: #ffffff !important; }
+      .feature h3, .download-card h3, .spec-card h3, .modal-title { color: #0f172a; }
+      .feature p, .section-content p, .section-content ul li, .download-card p, .spec-card ul li span:last-child, footer p { color: #475569; }
+      .spec-card ul li span:first-child { color: #0f172a; }
+      .social-links a { background: #f1f5f9 !important; border: 1px solid rgba(0, 0, 0, 0.06); color: #475569; }
+      .social-links a:hover { background: var(--primary) !important; color: #ffffff !important; border-color: var(--primary) !important; }
+      .modal-info { background: rgba(0, 78, 255, 0.04); border: 1px solid rgba(0, 78, 255, 0.12); color: #475569; }
+      .modal-info strong { color: #0f172a; }
+      .sdk-card { background: linear-gradient(160deg, #ffffff 0%, #f5f8ff 100%) !important; border: 1px solid rgba(0, 78, 255, 0.12) !important; }
+      .sdk-card:hover { box-shadow: 0 24px 50px rgba(0, 78, 255, 0.12), 0 0 0 1px rgba(0, 78, 255, 0.2) !important; }
+      .sdk-detail-item { background: rgba(0, 78, 255, 0.02) !important; border: 1px solid rgba(0, 0, 0, 0.04) !important; }
+      .sdk-detail-item:hover { background: rgba(0, 78, 255, 0.05) !important; border-color: rgba(0, 78, 255, 0.2) !important; }
+      .sdk-cta { color: #004eff !important; border-color: rgba(0, 78, 255, 0.3) !important; background: linear-gradient(135deg, rgba(0, 78, 255, 0.08) 0%, rgba(0, 78, 255, 0.03) 100%) !important; }
+      .sdk-cta:hover { color: #ffffff !important; border-color: transparent !important; background: linear-gradient(135deg, #0050ff 0%, #0038d4 100%) !important; }
+      .hero-image img { mix-blend-mode: multiply; }
 
       @media (max-width: 768px) {
-        nav {
-          padding: 1rem 4%;
-          flex-wrap: wrap;
-          gap: 1rem;
-        }
-
-        .nav-links {
-          gap: 1rem;
-          font-size: 0.9rem;
-        }
-
-        .hero {
-          padding-top: 120px;
-
-        }
-
-        .cta-buttons {
-          flex-direction: column;
-        }
-
-        .btn {
-          width: 100%;
-        }
-
-        .features,
-        .software,
-        .specs,
-        .content-section {
-          padding: 4rem 4%;
-        }
+        .nav-links { background: #ffffff; box-shadow: -10px 0 30px rgba(0,0,0,0.08); }
       }
+    }
 
-      @media (max-width: 480px) {
-        .nav-links {
-          width: 100%;
-          justify-content: space-around;
-          gap: 0.5rem;
-          font-size: 0.85rem;
-        }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+      html { scroll-behavior: auto; }
+    }
+  </style>
+</head>
 
-        .modal-content {
-          margin: 15% auto;
-          padding: 2rem;
-        }
-      }
-    </style>
-  </head>
+<body>
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
 
-  <body>
-    <div class="bg-gradient"></div>
+  <nav id="nav">
+    <div class="logo">NiftyDrum</div>
+    <button class="burger" id="burger" aria-label="Toggle navigation menu">
+      <span class="burger-line"></span>
+      <span class="burger-line"></span>
+      <span class="burger-line"></span>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#plus">NiftyDrum+</a></li>
+      <li><a href="#sdk">SDK</a></li>
+      <li><a href="#specs">Specs</a></li>
+      <li><a href="#software">Software</a></li>
+    </ul>
+  </nav>
+  <div class="nav-overlay" id="navOverlay"></div>
 
-    <nav id="nav">
-      <div class="logo">NiftyDrum</div>
-      <ul class="nav-links">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#details">How It Works</a></li>
-        <li><a href="#software">Software</a></li>
-        <li><a href="#specs">Specs</a></li>
+  <section class="hero">
+    <div class="hero-content">
+      <h1>The Ultimate MIDI &<br>Sound Trigger Platform</h1>
+      <div class="hero-image">
+        <picture>
+          <source srcset="nd-logo.png" media="(prefers-color-scheme: light)">
+          <img src="nd-logo-dark.png" alt="NiftyDrum Logo">
+        </picture>
+      </div>
+      <p>From ultra-low latency MIDI drum modules to custom instruments. Connect up to 9 piezos + 1 FSR, and build anything with our SDKs.</p>
+      <div class="cta-buttons">
+        <a href="#sdk" class="btn btn-primary"><i class="fas fa-rocket" style="font-size:0.85rem"></i> Explore our SDKs</a>
+        <a href="https://doc.niftydrum.com/" target="_blank" class="btn btn-secondary" id="dl-button"><i class="fas fa-book-open" style="font-size:0.85rem"></i> Read Documentation</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <h2 class="section-title">Core Capabilities</h2>
+    <p class="section-subtitle">High-performance hardware designed for musicians and makers.</p>
+    <div class="features-grid">
+      <div class="feature">
+        <div class="feature-icon"><i class="fas fa-plug"></i></div>
+        <h3>9 Piezos + 1 FSR</h3>
+        <p>Plug your pads into the terminal blocks and start playing right away.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+        <h3>Low-Latency</h3>
+        <p>Lightning-fast MIDI over USB with less than 2.5ms latency.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon"><i class="fas fa-microchip"></i></div>
+        <h3>Open Platform</h3>
+        <p>Build your own custom instruments with our Arduino-compatible SDKs.</p>
+      </div>
+      <div class="feature">
+        <div class="feature-icon"><i class="fas fa-volume-high"></i></div>
+        <h3>NiftyDrum+ Extension</h3>
+        <p>High quality sounds thanks to our modular sound engine.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section" id="details">
+    <div class="section-image">
+      <img src="https://ronnatech.com/wp-content/uploads/2025/08/IMG_0361-bgr.png" alt="NiftyDrum connected">
+    </div>
+    <div class="section-content">
+      <h2>How It Works</h2>
+      <p>NiftyDrum delivers high-level MIDI performance in 4 or 5 easy steps:</p>
+      <ul>
+        <li>Connect up to 9 piezos and 1 FSR to the terminal blocks</li>
+        <li>Plug into your DAW or drum module via USB</li>
+        <li>Use our GUI for trigger parameters, mapping and velocity shaping</li>
+        <li>Play — notes stream out instantly with zero perceivable latency</li>
+        <li>Use NiftyDrum+ sound engine and get a fully-featured drum module</li>
       </ul>
-    </nav>
+    </div>
+  </section>
 
-    <section class="hero">
-      <div class="hero-decoration deco-1"></div>
-      <div class="hero-decoration deco-2"></div>
-      <div class="hero-content">
-        <div class="hero-image">
-          <picture>
-            <source srcset="nd-logo.png" media="(prefers-color-scheme: light)">
-            <img src="nd-logo-dark.png" alt="NiftyDrum Logo">
-          </picture>
-        </div>
-        <h1>Real-time MIDI Trigger Module</h1>
-        <p>Connect up to 9 piezos and 1 FSR. Get real-time MIDI over USB.</p>
-        <p>Flawless performance with ultra-low latency.</p>
-        <div class="cta-buttons">
-          <a href="#software" class="btn btn-primary" id="dl-button">Download Software</a>
-          <a href="#specs" class="btn btn-secondary">View Specs</a>
-        </div>
-      </div>
-    </section>
+  <section class="content-section reverse" id="plus">
+    <div class="section-image">
+      <img src="https://ronnatech.com/wp-content/uploads/ndp_small.png" alt="NiftyDrum+ Board">
+    </div>
+    <div class="section-content">
+      <h2>Meet NiftyDrum+</h2>
+      <p>Take your builds to the next level with <strong>NiftyDrum+</strong>, a single, unified board combining our sensor-to-MIDI interface with a powerful sound engine.</p>
+      <ul>
+        <li><strong>All-in-One:</strong> Sensors + Sound generation on a single board.</li>
+        <li><strong>Ultra-Low Latency:</strong> Total system latency (sensor to audio) is <strong>&lt;10ms</strong>.</li>
+        <li><strong>High Audio Quality:</strong> Wav samples with 44.1kHz or 48kHz sample rate.</li>
+        <li><strong>Velocity layers:</strong> supported up to any number of layers.</li>
+        <li><strong>Round Robin:</strong> supported by default.</li>
+        <li><strong>Ready to Play:</strong> Comes with a pre-installed drum module firmware.</li>
+      </ul>
+    </div>
+  </section>
 
-    <section class="features" id="features">
-      <h2 class="section-title">Features</h2>
-      <div class="features-grid">
-        <div class="feature">
-          <div class="feature-icon">
-            <i class="fas fa-plug"></i>
+  <section class="sdk-section" id="sdk">
+    <h2 class="section-title">More Than Just Drums</h2>
+    <p class="section-subtitle">Thanks to our open, Arduino-compatible SDKs, NiftyDrum+ is a blank canvas for makers. Create a custom drum module, interactive music boxes, or entirely new instruments.</p>
+    <div class="download-cards">
+      <div class="download-card sdk-card">
+        <div class="sdk-header">
+          <div class="sdk-icon-wrapper"><i class="fas fa-microchip"></i></div>
+          <div class="sdk-title-group">
+            <h3>Sensor SDK</h3>
+            <span class="sdk-subtitle">STM32F1 • C++ • USB MIDI</span>
           </div>
-          <h3>9 Piezos + 1 FSR</h3>
-          <p>Simply plug your pads into the board and start playing immediately.</p>
         </div>
-        <div class="feature">
-          <div class="feature-icon">
-            <i class="fas fa-bolt"></i>
-          </div>
-          <h3>Low-Latency MIDI</h3>
-          <p>Lightning-fast MIDI over USB with less than 2.5ms latency.</p>
+        <p class="sdk-desc">Arduino-compatible library for the sensor-to-MIDI interface. Read piezos and FSR, customize trigger logic, and stream MIDI over USB.</p>
+        <div class="sdk-details">
+          <div class="sdk-detail-item"><i class="fas fa-bolt"></i><div><strong>Fast trigger readings</strong><span>Read trigger states from ADC with incredibly low latency</span></div></div>
+          <div class="sdk-detail-item"><i class="fa-brands fa-usb"></i><div><strong>Native USB MIDI</strong><span>Stream MIDI over USB at full speed</span></div></div>
+          <div class="sdk-detail-item"><i class="fas fa-tools"></i><div><strong>Stable ARM Toolchain</strong><span>ARM None-EABI (gcc-arm-none-eabi)</span></div></div>
         </div>
-        <div class="feature">
-          <div class="feature-icon">
-            <i class="fas fa-rocket"></i>
-          </div>
-          <h3>Plug & Play</h3>
-          <p>Connect and play immediately. No drivers or complicated setup required.</p>
-        </div>
-        <div class="feature">
-          <div class="feature-icon">
-            <i class="fas fa-sliders-h"></i>
-          </div>
-          <h3>Configurable</h3>
-          <p>Assign notes and tweak trigger parameters in our intuitive user interface.</p>
-        </div>
+        <a href="https://ronnatech.com/sdm_downloads/arduino_stm32/" target="_blank" class="sdk-cta"><i class="fas fa-book"></i><span>Read Documentation</span><i class="fas fa-arrow-right cta-arrow"></i></a>
       </div>
-    </section>
 
-    <section class="content-section" id="details">
-      <div class="section-image">
-        <img src="https://ronnatech.com/wp-content/uploads/2025/08/IMG_0361-bgr.png" alt="NiftyDrum connected">
+      <div class="download-card sdk-card">
+        <div class="sdk-header">
+          <div class="sdk-icon-wrapper"><i class="fas fa-volume-high"></i></div>
+          <div class="sdk-title-group">
+            <h3>Sound SDK</h3>
+            <span class="sdk-subtitle">STM32F401 • Audio • WaveTooEasy</span>
+          </div>
+        </div>
+        <p class="sdk-desc">Control the sound engine. Trigger samples via the WaveTooEasy library, synthesize audio, and build custom audio logic for your unique instrument.</p>
+        <div class="sdk-details">
+          <div class="sdk-detail-item"><i class="fas fa-file-waveform"></i><div><strong>WaveTooEasy Integration</strong><span>Polyphonic sample triggering & routing</span></div></div>
+          <div class="sdk-detail-item"><i class="fas fa-microchip"></i><div><strong>STM32F401 Core</strong><span>MIDI in, digital and analog inputs</span></div></div>
+          <div class="sdk-detail-item"><i class="fas fa-infinity"></i><div><strong>Arduino IDE Ready</strong><span>Install via Artekit Board Manager URL</span></div></div>
+        </div>
+        <a href="https://github.com/RonnaTechnologies/artekit_stm32f401-core" target="_blank" class="sdk-cta"><i class="fab fa-github"></i><span>View on GitHub</span><i class="fas fa-arrow-right cta-arrow"></i></a>
       </div>
-      <div class="section-content">
-        <h2>How It Works</h2>
-        <p>NiftyDrum delivers high-level MIDI performance in 4 easy steps:</p>
+    </div>
+  </section>
+
+  <section class="specs" id="specs">
+    <h2 class="section-title">Technical Specifications</h2>
+    <p class="section-subtitle">Hardware and performance metrics for the NiftyDrum+ platform.</p>
+    <div class="specs-grid">
+      <div class="spec-card">
+        <h3><i class="fas fa-microchip"></i> Hardware</h3>
         <ul>
-          <li>Connect up to 9 piezos and 1 FSR to the terminal blocks</li>
-          <li>Plug into your DAW or drum module via USB</li>
-          <li>Use our GUI for trigger parameters, mapping and velocity shaping</li>
-          <li>Play — notes stream out instantly with zero perceivable latency</li>
+          <li><span>Inputs</span> <span>9 Piezo + 1 FSR</span></li>
+          <li><span>Connectors</span> <span>Terminal blocks</span></li>
+          <li><span>USB</span> <span>USB 2.0 Type-C</span></li>
+          <li><span>Audio</span> <span>TRS 3.5mm (⅛&quot;)</span></li>
         </ul>
       </div>
-    </section>
-
-    <section class="software" id="software">
-      <div class="software-content">
-        <h2 class="section-title">Software</h2>
-        <div class="webapp" id="webapp-button">
-          <a href="https://app.niftydrum.com" class="btn btn-primary">Use the app in your Browser</a>
-        </div>
-        <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 800px; margin: 0 auto 3rem;">Get the official
-          NiftyDrum configuration software for your operating system. Configure your triggers, map MIDI notes, and
-          fine-tune velocity curves with our intuitive interface.</p>
-        <div class="download-cards">
-          <div class="download-card windows">
-            <div class="download-card-icon">
-              <i class="fab fa-windows"></i>
-            </div>
-            <h3>Windows</h3>
-            <p>Compatible with Windows 10, and 11</p>
-            <a href="#" class="download-link" id="windowsDownload">Download for Windows</a>
-          </div>
-          <div class="download-card linux">
-            <div class="download-card-icon">
-              <i class="fab fa-linux"></i>
-            </div>
-            <h3>Linux</h3>
-            <p>Compatible with Ubuntu 22.04+, Debian</p>
-            <a href="#" class="download-link" id="linuxDownload">Download for Linux</a>
-          </div>
-          <div class="download-card mac">
-            <div class="download-card-icon">
-              <i class="fab fa-apple"></i>
-            </div>
-            <h3>macOS</h3>
-            <p>Compatible with macOS 12+.</p>
-            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3334" class="download-link">Download for
-              macOS</a>
-          </div>
-        </div>
+      <div class="spec-card">
+        <h3><i class="fas fa-tachometer-alt"></i> Performance</h3>
+        <ul>
+          <li><span>MIDI Latency</span> <span>&lt;2.5ms</span></li>
+          <li><span>Trigger to Sound</span> <span>&lt;10ms</span></li>
+          <li><span>Sampling Rate</span> <span>&gt;10kHz</span></li>
+          <li><span>Audio Rate</span> <span>&ge;44.1kHz</span></li>
+        </ul>
       </div>
-    </section>
-
-    <section class="specs" id="specs">
-      <h2 class="section-title">Technical Specifications</h2>
-      <div class="specs-grid">
-        <div class="spec-card">
-          <h3><i class="fas fa-microchip"></i> Hardware</h3>
-          <ul>
-            <li><span>Inputs</span> <span>9 Piezo + 1 FSR</span></li>
-            <li><span>Connectors</span> <span>Terminal blocks</span></li>
-            <li><span>USB</span> <span>USB 2.0 Type-C</span></li>
-            <li><span>Power</span> <span>USB Powered</span></li>
-            <li><span>Dimensions</span> <span>65x56.5mm</span></li>
-          </ul>
-        </div>
-        <div class="spec-card">
-          <h3><i class="fas fa-tachometer-alt"></i> Performance</h3>
-          <ul>
-            <li><span>Latency</span> <span>&lt;2.5ms</span></li>
-            <li><span>Sample Rate</span> <span>&gt;10kHz</span></li>
-            <li><span>Velocity Sensitivity</span> <span>127 Levels</span></li>
-          </ul>
-        </div>
-        <div class="spec-card">
-          <h3><i class="fas fa-cogs"></i> Software</h3>
-          <ul>
-            <li><span>Compatibility</span> <span>Windows, Mac, Linux</span></li>
-            <li><span>User Interface</span> <span>Web-based GUI</span></li>
-            <li><span>Firmware</span> <span>USB Updates</span></li>
-            <li><span>MIDI Messages</span> <span>Notes, CC</span></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <footer id="support">
-      <div class="social-links">
-        <a href="https://github.com/RonnaTechnologies" target="_blank"><i class="fab fa-github"></i></a>
-        <a href="https://www.youtube.com/@RonnaTech" target="_blank"><i class="fab fa-youtube"></i></a>
-        <a href="https://x.com/RonnaTech" target="_blank"><i class="fab fa-twitter"></i></a>
-        <a href="https://www.linkedin.com/company/ronnatech/" target="_blank"><i class="fab fa-linkedin"></i></a>
-      </div>
-      <p>&copy; 2026 NiftyDrum by Ronna Technologies</p>
-      <p>Designed for drummers, by drummers</p>
-      <p>Support & Community: <a href="https://ronnatech.com/forum/forum/niftydrum/" target="_blank">Visit our Forum</a>
-      </p>
-    </footer>
-
-    <!-- Windows Download Modal -->
-    <div id="windowsModal" class="modal">
-      <div class="modal-content">
-        <span class="close windows-close">&times;</span>
-        <h2 class="modal-title"><i class="fab fa-windows"></i> Windows Downloads</h2>
-
-        <div class="modal-info">
-          <p><i class="fas fa-info-circle"></i> <strong>Important:</strong> To run the NiftyDrum software on Windows,
-            you need to install the Microsoft Visual C++ Redistributable package.</p>
-          <p>Download and install the latest version from Microsoft:</p>
-          <p><a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank">Download Visual C++
-              Redistributable (x64)</a></p>
-        </div>
-        <ul class="modal-links">
-          <li class="modal-link-item">
-            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3330" target="_blank"
-              class="modal-link-content">
-              <div class="modal-link-icon">
-                <i class="fab fa-windows"></i>
-              </div>
-              <span class="modal-link-text">Download</span>
-              <i class="fas fa-arrow-right modal-link-arrow"></i>
-            </a>
-          </li>
+      <div class="spec-card">
+        <h3><i class="fas fa-cogs"></i> Software</h3>
+        <ul>
+          <li><span>Compatibility</span> <span>Win / Mac / Linux</span></li>
+          <li><span>Interface</span> <span>Web-based GUI</span></li>
+          <li><span>Firmware</span> <span>USB Updates</span></li>
+          <li><span>Development</span> <span>Arduino SDKs</span></li>
         </ul>
       </div>
     </div>
+  </section>
 
-    <!-- Linux Download Modal -->
-    <div id="linuxModal" class="modal">
-      <div class="modal-content">
-        <span class="close linux-close">&times;</span>
-        <h2 class="modal-title"><i class="fab fa-linux"></i> Linux Downloads</h2>
-
-        <div class="modal-info">
-          <p><i class="fas fa-info-circle"></i> <strong>Important:</strong> To ensure proper USB device access, you may
-            need to add your user to the dialout group. Run this command in your terminal:</p>
-          <p><code>sudo usermod -aG dialout $USER</code></p>
-          <p>Then log out and log back in for the changes to take effect.</p>
-        </div>
-
-        <ul class="modal-links">
-          <li class="modal-link-item">
-            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3336" target="_blank"
-              class="modal-link-content">
-              <div class="modal-link-icon">
-                <i class="fab fa-ubuntu"></i>
-              </div>
-              <span class="modal-link-text">Ubuntu 22.04</span>
-              <i class="fas fa-arrow-right modal-link-arrow"></i>
-            </a>
-          </li>
-          <li class="modal-link-item">
-            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3337" target="_blank"
-              class="modal-link-content">
-              <div class="modal-link-icon">
-                <i class="fab fa-ubuntu"></i>
-              </div>
-              <span class="modal-link-text">Ubuntu 24.04</span>
-              <i class="fas fa-arrow-right modal-link-arrow"></i>
-            </a>
-          </li>
-          <li class="modal-link-item">
-            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3335" target="_blank"
-              class="modal-link-content">
-              <div class="modal-link-icon debian-icon">
-                <img src="https://www.debian.org/logos/openlogo-nd.svg" height=24 width=24 alt="Debian Logo">
-              </div>
-              <span class="modal-link-text">Debian 13</span>
-              <i class="fas fa-arrow-right modal-link-arrow"></i>
-            </a>
-          </li>
-        </ul>
+  <section class="software" id="software">
+    <h2 class="section-title">Configuration Software</h2>
+    <div class="webapp" id="webapp-button">
+      <a href="https://app.niftydrum.com" class="btn btn-primary"><i class="fas fa-globe" style="font-size:0.85rem"></i> Use the Web App</a>
+    </div>
+    <p class="section-subtitle">Use our official apps to configure the <strong>pre-installed drum module firmware</strong>. Map MIDI notes, tweak trigger parameters, and fine-tune velocity curves.<br><em>Want to write your own code? Check out the SDKs above!</em></p>
+    <div class="download-cards">
+      <div class="download-card windows">
+        <div class="download-card-icon"><i class="fab fa-windows"></i></div>
+        <h3>Windows</h3>
+        <p>Compatible with Windows 10 & 11</p>
+        <a href="#" class="download-link" id="windowsDownload"><i class="fas fa-download" style="font-size:0.8rem"></i> Download</a>
+      </div>
+      <div class="download-card linux">
+        <div class="download-card-icon"><i class="fab fa-linux"></i></div>
+        <h3>Linux</h3>
+        <p>Ubuntu 22.04+, Debian</p>
+        <a href="#" class="download-link" id="linuxDownload"><i class="fas fa-download" style="font-size:0.8rem"></i> Download</a>
+      </div>
+      <div class="download-card mac">
+        <div class="download-card-icon"><i class="fab fa-apple"></i></div>
+        <h3>macOS</h3>
+        <p>Compatible with macOS 12+</p>
+        <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3334" class="download-link"><i class="fas fa-download" style="font-size:0.8rem"></i> Download</a>
       </div>
     </div>
+  </section>
 
-    <script>
-      const dl_button = document.getElementById("dl-button")
-      const has_serial = 'serial' in navigator
+  <footer id="support">
+    <div class="social-links">
+      <a href="https://github.com/RonnaTechnologies" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+      <a href="https://www.youtube.com/@RonnaTech" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+      <a href="https://x.com/RonnaTech" target="_blank" aria-label="Twitter / X"><i class="fab fa-twitter"></i></a>
+      <a href="https://www.linkedin.com/company/ronnatech/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+    </div>
+    <p>&copy; 2026 NiftyDrum by Ronna Technologies</p>
+    <p>Designed for drummers, by drummers</p>
+    <p>Support & Community: <a href="https://ronnatech.com/forum/forum/niftydrum/" target="_blank">Visit our Forum</a></p>
+  </footer>
 
-      if (has_serial)
-      {
-        dl_button.innerHTML = 'Try / Download Software'
-      }
-      else
-      {
-        document.getElementById('webapp-button').style.display = 'none'
-      }
-    </script>
-    <script>
-      // Smooth scrolling
-      document.querySelectorAll('a[href^="#"]').forEach(anchor =>
-      {
-        anchor.addEventListener('click', function (e)
-        {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target)
-          {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  <div id="windowsModal" class="modal">
+    <div class="modal-content">
+      <span class="close windows-close">&times;</span>
+      <h2 class="modal-title"><i class="fab fa-windows"></i> Windows Downloads</h2>
+      <div class="modal-info">
+        <p><i class="fas fa-info-circle"></i> <strong>Important:</strong> To run the software, you need the Microsoft Visual C++ Redistributable package.</p>
+        <p style="margin-top:0.6rem"><a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank">Download Visual C++ Redistributable (x64) →</a></p>
+      </div>
+      <ul class="modal-links">
+        <li class="modal-link-item">
+          <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3330" target="_blank" class="modal-link-content">
+            <div class="modal-link-icon"><i class="fab fa-windows"></i></div>
+            <span class="modal-link-text">Download Installer</span>
+            <i class="fas fa-arrow-right modal-link-arrow"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="linuxModal" class="modal">
+    <div class="modal-content">
+      <span class="close linux-close">&times;</span>
+      <h2 class="modal-title"><i class="fab fa-linux"></i> Linux Downloads</h2>
+      <div class="modal-info">
+        <p><i class="fas fa-info-circle"></i> <strong>Important:</strong> For proper USB device access, add your user to the dialout group:</p>
+        <p style="margin-top:0.5rem"><code>sudo usermod -aG dialout $USER</code></p>
+        <p style="margin-top:0.5rem">Then log out and back in.</p>
+      </div>
+      <ul class="modal-links">
+        <li class="modal-link-item"><a href="https://ronnatech.com/?sdm_process_download=1&download_id=3336" target="_blank" class="modal-link-content"><div class="modal-link-icon"><i class="fab fa-ubuntu"></i></div><span class="modal-link-text">Ubuntu 22.04</span><i class="fas fa-arrow-right modal-link-arrow"></i></a></li>
+        <li class="modal-link-item"><a href="https://ronnatech.com/?sdm_process_download=1&download_id=3337" target="_blank" class="modal-link-content"><div class="modal-link-icon"><i class="fab fa-ubuntu"></i></div><span class="modal-link-text">Ubuntu 24.04</span><i class="fas fa-arrow-right modal-link-arrow"></i></a></li>
+        <li class="modal-link-item"><a href="https://ronnatech.com/?sdm_process_download=1&download_id=3335" target="_blank" class="modal-link-content"><div class="modal-link-icon"><img src="https://www.debian.org/logos/openlogo-nd.svg" height="22" width="22" alt="Debian"></div><span class="modal-link-text">Debian 13</span><i class="fas fa-arrow-right modal-link-arrow"></i></a></li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    const dl_button = document.getElementById("dl-button");
+    if ('serial' in navigator) {
+      dl_button.innerHTML = '<i class="fas fa-download" style="font-size:0.85rem"></i> Try / Download Software';
+    } else {
+      document.getElementById('webapp-button').style.display = 'none';
+    }
+  </script>
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const t = document.querySelector(this.getAttribute('href'));
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 80));
+
+    const burger = document.getElementById('burger');
+    const navLinks = document.getElementById('navLinks');
+    const navOverlay = document.getElementById('navOverlay');
+
+    if (burger && navLinks && navOverlay) {
+      burger.addEventListener('click', () => {
+        burger.classList.toggle('active');
+        navLinks.classList.toggle('active');
+        navOverlay.classList.toggle('active');
+        document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+      });
+      navOverlay.addEventListener('click', () => {
+        burger.classList.remove('active');
+        navLinks.classList.remove('active');
+        navOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+      document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', () => {
+          burger.classList.remove('active');
+          navLinks.classList.remove('active');
+          navOverlay.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+    }
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -80px 0px' });
+
+    document.querySelectorAll('.feature, .spec-card, .download-card, .section-title, .section-subtitle').forEach((el, i) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(36px)';
+      el.style.transition = `opacity 0.7s var(--ease-out-expo) ${i % 4 * 0.08}s, transform 0.7s var(--ease-out-expo) ${i % 4 * 0.08}s`;
+      obs.observe(el);
+    });
+
+    document.querySelectorAll('.content-section').forEach(section => {
+      const children = section.querySelectorAll('.section-content, .section-image');
+      children.forEach((child, i) => {
+        child.style.opacity = '0';
+        child.style.transform = 'translateY(36px)';
+        child.style.transition = `opacity 0.7s var(--ease-out-expo) ${i * 0.15}s, transform 0.7s var(--ease-out-expo) ${i * 0.15}s`;
+      });
+      const sObs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            children.forEach(c => { c.style.opacity = '1'; c.style.transform = 'translateY(0)'; });
+            sObs.unobserve(entry.target);
           }
         });
-      });
+      }, { threshold: 0.1 });
+      sObs.observe(section);
+    });
 
-      // Nav scroll effect
-      const nav = document.getElementById('nav');
-      window.addEventListener('scroll', () =>
-      {
-        if (window.scrollY > 100)
-        {
-          nav.classList.add('scrolled');
-        } else
-        {
-          nav.classList.remove('scrolled');
-        }
-      });
-
-
-      // Intersection Observer for animations
-      const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-      };
-
-      const observer = new IntersectionObserver((entries) =>
-      {
-        entries.forEach(entry =>
-        {
-          if (entry.isIntersecting)
-          {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-            observer.unobserve(entry.target);
-          }
-        });
-      }, observerOptions);
-
-      document.querySelectorAll('.feature, .spec-card, .download-card, .section-title').forEach(el =>
-      {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(60px)';
-        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-        observer.observe(el);
-      });
-
-      // Separate observer for content sections with staggered children
-      document.querySelectorAll('.content-section').forEach(section =>
-      {
-        const children = section.querySelectorAll('.section-content, .section-image');
-        children.forEach((child, index) =>
-        {
-          child.style.opacity = '0';
-          child.style.transform = 'translateY(60px)';
-          child.style.transition = `opacity 0.8s ease ${index * 0.2}s, transform 0.8s ease ${index * 0.2}s`;
-        });
-
-        const sectionObserver = new IntersectionObserver((entries) =>
-        {
-          entries.forEach(entry =>
-          {
-            if (entry.isIntersecting)
-            {
-              children.forEach(child =>
-              {
-                child.style.opacity = '1';
-                child.style.transform = 'translateY(0)';
-              });
-              sectionObserver.unobserve(entry.target);
-            }
-          });
-        }, observerOptions);
-
-        sectionObserver.observe(section);
-      });
-
-
-      // Modal functionality
-      const windowsDownloadBtn = document.getElementById('windowsDownload');
-      const linuxDownloadBtn = document.getElementById('linuxDownload');
-      const windowsModal = document.getElementById('windowsModal');
-      const linuxModal = document.getElementById('linuxModal');
-      const windowsCloseBtn = document.querySelector('.windows-close');
-      const linuxCloseBtn = document.querySelector('.linux-close');
-
-      windowsDownloadBtn.addEventListener('click', function (e)
-      {
-        e.preventDefault();
-        windowsModal.style.display = 'block';
-      });
-
-      linuxDownloadBtn.addEventListener('click', function (e)
-      {
-        e.preventDefault();
-        linuxModal.style.display = 'block';
-      });
-
-      windowsCloseBtn.addEventListener('click', function ()
-      {
-        windowsModal.style.display = 'none';
-      });
-
-      linuxCloseBtn.addEventListener('click', function ()
-      {
-        linuxModal.style.display = 'none';
-      });
-
-      window.addEventListener('click', function (e)
-      {
-        if (e.target === windowsModal)
-        {
-          windowsModal.style.display = 'none';
-        }
-        if (e.target === linuxModal)
-        {
-          linuxModal.style.display = 'none';
-        }
-      });
-    </script>
-  </body>
+    const wBtn = document.getElementById('windowsDownload');
+    const lBtn = document.getElementById('linuxDownload');
+    const wModal = document.getElementById('windowsModal');
+    const lModal = document.getElementById('linuxModal');
+    wBtn.addEventListener('click', e => { e.preventDefault(); wModal.style.display = 'block'; });
+    lBtn.addEventListener('click', e => { e.preventDefault(); lModal.style.display = 'block'; });
+    document.querySelector('.windows-close').addEventListener('click', () => wModal.style.display = 'none');
+    document.querySelector('.linux-close').addEventListener('click', () => lModal.style.display = 'none');
+    window.addEventListener('click', e => {
+      if (e.target === wModal) wModal.style.display = 'none';
+      if (e.target === lModal) lModal.style.display = 'none';
+    });
+  </script>
+</body>
 
 </html>
