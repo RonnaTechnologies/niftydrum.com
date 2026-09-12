@@ -88,7 +88,9 @@ section[id]{scroll-margin-top:88px}
 .nav{position:fixed;top:0;left:0;right:0;z-index:90;transition:background .3s,box-shadow .3s}
 .nav.scrolled{background:var(--nav-bg);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line)}
 .nav-in{display:flex;align-items:center;justify-content:space-between;height:74px}
-.logo{font-family:var(--logo);font-weight:700;font-size:1.55rem;letter-spacing:-.01em;color:var(--ink)}
+.logo{font-family:'Source Sans Pro','Source Sans 3',sans-serif;font-weight:700;font-size:1.55rem;letter-spacing:-.01em;color:var(--ink);
+  font-variant-ligatures:common-ligatures discretionary-ligatures;
+  -webkit-font-feature-settings:"liga" 1,"dlig" 1;font-feature-settings:"liga" 1,"dlig" 1}
 .nav-links{display:flex;align-items:center;gap:32px;font-size:.95rem;font-weight:400}
 .nav-links a{color:var(--mut);transition:color .25s;position:relative}
 .nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-5px;height:2px;border-radius:2px;
@@ -337,8 +339,15 @@ footer .logo{color:#fff}
 .distro a:hover{border-color:var(--blue);background:var(--blue-t2);color:var(--link-strong)}
 .distro a .distro-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex-shrink:0}
 .distro a .distro-icon.ubu{background:linear-gradient(135deg,#e95420,#ff6a3d)}
-.distro a .distro-icon.deb{background:linear-gradient(135deg,#a80030,#d70751)}
+.distro a .distro-icon.deb{background:#fff;border:1px solid var(--line)}
 .distro a .distro-icon svg{width:17px;height:17px;color:#fff}
+.distro a .distro-icon.deb img{width:16px;height:16px;object-fit:contain}
+
+/* ============ TOAST (status messages) ============ */
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(12px);z-index:200;
+  background:var(--ink);color:var(--bg);font-size:.85rem;font-weight:600;padding:12px 20px;border-radius:12px;
+  box-shadow:var(--sh);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ============ RESPONSIVE ============ */
 @media(max-width:1020px){
@@ -384,7 +393,7 @@ footer .logo{color:#fff}
       <a href="#software">Software</a>
     </nav>
     <a class="nav-cta" href="https://app.niftydrum.com" target="_blank" rel="noopener">Web App</a>
-    <button class="burger" id="burger" aria-label="Toggle menu">MENU</button>
+    <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">MENU</button>
   </div>
 </header>
 
@@ -414,7 +423,7 @@ footer .logo{color:#fff}
       <div class="hv-ring r1" aria-hidden="true"></div>
       <div class="hv-ring r2" aria-hidden="true"></div>
       <figure class="hv-card">
-        <img src="https://ronnatech.com/wp-content/uploads/ndp_small.png" alt="NiftyDrum+ board">
+        <img src="https://ronnatech.com/wp-content/uploads/ndp_small.png" alt="NiftyDrum+ board" fetchpriority="high">
         <div class="hv-signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </figure>
       <div class="badge b1">NiftyDrum+<b>&lt;10ms sensor → audio</b></div>
@@ -546,9 +555,9 @@ footer .logo{color:#fff}
         <div class="sdk-head">
           <span class="sdk-chip">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="6.5" y="6.5" width="11" height="11" rx="1.5"/>
-              <circle class="die" cx="9.6" cy="9.6" r="1.05"/>
-              <path d="M9.5 6.5v-3M12 6.5v-3M14.5 6.5v-3M9.5 20.5v-3M12 20.5v-3M14.5 20.5v-3M6.5 9.5h-3M6.5 12h-3M6.5 14.5h-3M20.5 9.5h-3M20.5 12h-3M20.5 14.5h-3"/>
+              <circle cx="12" cy="12" r="3.4"/>
+              <path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"/>
+              <path d="M6.5 6.5l2.1 2.1M15.4 15.4l2.1 2.1M6.5 17.5l2.1-2.1M15.4 8.6l2.1-2.1"/>
             </svg>
           </span>
           Sensor SDK · STM32F1
@@ -569,9 +578,7 @@ footer .logo{color:#fff}
         <div class="sdk-head">
           <span class="sdk-chip">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="6.5" y="6.5" width="11" height="11" rx="1.5"/>
-              <circle class="die" cx="9.6" cy="9.6" r="1.05"/>
-              <path d="M9.5 6.5v-3M12 6.5v-3M14.5 6.5v-3M9.5 20.5v-3M12 20.5v-3M14.5 20.5v-3M6.5 9.5h-3M6.5 12h-3M6.5 14.5h-3M20.5 9.5h-3M20.5 12h-3M20.5 14.5h-3"/>
+              <path d="M4 10v4M8 6.5v11M12 3.5v17M16 6.5v11M20 10v4"/>
             </svg>
           </span>
           Sound SDK · STM32F401
@@ -725,7 +732,12 @@ footer .logo{color:#fff}
     <h3 id="winTitle">Windows Downloads</h3>
     <p class="warn"><b>Important:</b> To run the software, you need the Microsoft Visual C++ Redistributable package.</p>
     <a class="btn ghost" style="width:100%;justify-content:center" href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank" rel="noopener">Download Visual C++ Redistributable (x64)</a>
-    <a class="btn solid" style="width:100%;justify-content:center" href="#">Download Installer</a>
+    <!--
+      FIX NEEDED: replace this placeholder with the real Windows installer URL.
+      Left as "#" intentionally rather than inventing a fake link — a dead "#"
+      is safer than a URL that looks real but 404s.
+    -->
+    <a class="btn solid" style="width:100%;justify-content:center" href="#" data-placeholder-link="true">Download Installer</a>
   </div>
 </div>
 
@@ -735,9 +747,13 @@ footer .logo{color:#fff}
     <button class="modal-x" data-close aria-label="Close">✕</button>
     <h3 id="linuxTitle">Linux Downloads</h3>
     <p class="warn"><b>Important:</b> For proper USB device access, add your user to the <b>dialout</b> group, then log out and back in.</p>
-    <div class="cmd"><code>sudo usermod -aG dialout $USER</code><button id="copyCmd">COPY</button></div>
+    <div class="cmd"><code>sudo usermod -aG dialout $USER</code><button id="copyCmd" aria-label="Copy command to clipboard">COPY</button></div>
+    <!--
+      FIX NEEDED: replace these placeholders with the real per-distro package URLs.
+      Left as "#" intentionally rather than inventing fake links.
+    -->
     <div class="distro">
-      <a href="#">
+      <a href="#" data-placeholder-link="true">
         <div class="distro-icon ubu">
           <svg viewBox="0 0 48 48" aria-hidden="true">
             <circle cx="24" cy="24" r="13" fill="none" stroke="currentColor" stroke-width="6.5" stroke-dasharray="17.2 10.03"/>
@@ -748,7 +764,7 @@ footer .logo{color:#fff}
         </div>
         Ubuntu 22.04
       </a>
-      <a href="#">
+      <a href="#" data-placeholder-link="true">
         <div class="distro-icon ubu">
           <svg viewBox="0 0 48 48" aria-hidden="true">
             <circle cx="24" cy="24" r="13" fill="none" stroke="currentColor" stroke-width="6.5" stroke-dasharray="17.2 10.03"/>
@@ -759,12 +775,9 @@ footer .logo{color:#fff}
         </div>
         Ubuntu 24.04
       </a>
-      <a href="#">
+      <a href="#" data-placeholder-link="true">
         <div class="distro-icon deb">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M20 12 A8 8 0 0 1 4 12 A6 6 0 0 1 16 12 A4.5 4.5 0 0 1 7 12 A3 3 0 0 1 13 12 A1.75 1.75 0 0 1 9.5 12"
-              fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" transform="rotate(-25 12 12)"/>
-          </svg>
+          <img src="https://www.debian.org/logos/openlogo-nd.svg" alt="Debian swirl logo" loading="lazy">
         </div>
         Debian 13
       </a>
@@ -772,16 +785,45 @@ footer .logo{color:#fff}
   </div>
 </div>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
 (function(){
 "use strict";
+
+/* ---------- lightweight toast for user-facing status messages ---------- */
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById("toast");
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+/* ---------- nav / burger menu ---------- */
 const nav = document.getElementById("nav");
 const burger = document.getElementById("burger");
 const navLinks = document.getElementById("navLinks");
-burger.addEventListener("click", () => navLinks.classList.toggle("open"));
-navLinks.querySelectorAll("a").forEach(a => a.addEventListener("click", () => navLinks.classList.remove("open")));
+burger.addEventListener("click", () => {
+  const isOpen = navLinks.classList.toggle("open");
+  burger.setAttribute("aria-expanded", String(isOpen));
+});
+navLinks.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
+  navLinks.classList.remove("open");
+  burger.setAttribute("aria-expanded", "false");
+}));
 
-/* steps progress */
+/* ---------- placeholder links: warn instead of silently doing nothing ---------- */
+document.querySelectorAll('[data-placeholder-link="true"]').forEach(a => {
+  a.addEventListener("click", (e) => {
+    e.preventDefault();
+    showToast("This download link isn't set up yet.");
+  });
+});
+
+/* ---------- steps progress ---------- */
 const stepsEl = document.getElementById("steps");
 const stepsFill = document.getElementById("stepsFill");
 function stepsProgress(){
@@ -794,7 +836,7 @@ function stepsProgress(){
   });
 }
 
-/* nav scroll-spy */
+/* ---------- nav scroll-spy ---------- */
 const spyIds = ["features","how","plus","sdk","specs","software"];
 const spyLinks = Array.from(document.querySelectorAll(".nav-links a"));
 function scrollSpy(){
@@ -813,35 +855,116 @@ function onScroll(){
 }
 window.addEventListener("scroll", onScroll, {passive:true});
 
-/* reveal on scroll */
-const io = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }});
-},{threshold:.16});
-document.querySelectorAll(".rv").forEach(el => io.observe(el));
+/* ---------- reveal on scroll, with a fallback if IntersectionObserver is unavailable ---------- */
+if ("IntersectionObserver" in window){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }});
+  },{threshold:.16});
+  document.querySelectorAll(".rv").forEach(el => io.observe(el));
+} else {
+  // No IntersectionObserver support: reveal everything immediately
+  // rather than leaving content stuck at opacity:0 forever.
+  document.querySelectorAll(".rv").forEach(el => el.classList.add("in"));
+}
 
-/* modals */
-function openModal(id){
+/* ---------- modals ---------- */
+let lastFocusedEl = null;
+
+function getFocusable(container){
+  return Array.from(container.querySelectorAll(
+    'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+  )).filter(el => el.offsetParent !== null);
+}
+
+function trapFocus(e, modal){
+  if(e.key !== "Tab") return;
+  const focusable = getFocusable(modal);
+  if(focusable.length === 0) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if(e.shiftKey && document.activeElement === first){
+    e.preventDefault();
+    last.focus();
+  } else if(!e.shiftKey && document.activeElement === last){
+    e.preventDefault();
+    first.focus();
+  }
+}
+
+function openModal(id, triggerEl){
   const m = document.getElementById(id);
   if(!m) return;
+  lastFocusedEl = triggerEl || document.activeElement;
   m.classList.add("open");
   document.body.style.overflow = "hidden";
-  const x = m.querySelector(".modal-x"); if(x) x.focus();
+  const card = m.querySelector(".modal-card");
+  const x = m.querySelector(".modal-x");
+  if(x) x.focus();
+
+  function onKeydown(e){
+    if(e.key === "Escape"){ closeModal(m); }
+    else { trapFocus(e, card); }
+  }
+  m._onKeydown = onKeydown;
+  document.addEventListener("keydown", onKeydown);
 }
-function closeModal(m){ m.classList.remove("open"); document.body.style.overflow = ""; }
-document.querySelectorAll("[data-modal]").forEach(b => b.addEventListener("click", () => openModal(b.dataset.modal)));
+
+function closeModal(m){
+  m.classList.remove("open");
+  document.body.style.overflow = "";
+  if(m._onKeydown){
+    document.removeEventListener("keydown", m._onKeydown);
+    m._onKeydown = null;
+  }
+  if(lastFocusedEl && typeof lastFocusedEl.focus === "function"){
+    lastFocusedEl.focus();
+  }
+}
+
+document.querySelectorAll("[data-modal]").forEach(b => b.addEventListener("click", () => openModal(b.dataset.modal, b)));
 document.querySelectorAll(".modal").forEach(m => {
   m.querySelectorAll("[data-close]").forEach(c => c.addEventListener("click", () => closeModal(m)));
 });
-document.addEventListener("keydown", e => {
-  if(e.key === "Escape") document.querySelectorAll(".modal.open").forEach(closeModal);
-});
 
-/* copy dialout command */
+/* ---------- copy dialout command (with real success/failure feedback) ---------- */
 const copyBtn = document.getElementById("copyCmd");
-if(copyBtn) copyBtn.addEventListener("click", () => {
-  if(navigator.clipboard) navigator.clipboard.writeText("sudo usermod -aG dialout $USER");
-  copyBtn.textContent = "COPIED ✓";
-  setTimeout(() => copyBtn.textContent = "COPY", 1600);
+const COMMAND_TEXT = "sudo usermod -aG dialout $USER";
+
+function legacyCopy(text){
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+  document.body.removeChild(ta);
+  return ok;
+}
+
+if (copyBtn) copyBtn.addEventListener("click", async () => {
+  let ok = false;
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(COMMAND_TEXT);
+      ok = true;
+    } else {
+      ok = legacyCopy(COMMAND_TEXT);
+    }
+  } catch (err) {
+    ok = legacyCopy(COMMAND_TEXT);
+  }
+
+  if (ok) {
+    copyBtn.textContent = "COPIED ✓";
+    showToast("Command copied to clipboard.");
+  } else {
+    copyBtn.textContent = "COPY FAILED";
+    showToast("Couldn't copy automatically — please select and copy the command manually.");
+  }
+  setTimeout(() => { copyBtn.textContent = "COPY"; }, 1800);
 });
 
 onScroll();
