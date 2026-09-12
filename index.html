@@ -1,1524 +1,974 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NiftyDrum – Real-time MIDI Trigger Module</title>
-    <meta name="description"
-      content="NiftyDrum: Real-time MIDI Trigger Module. Connect up to 9 piezos and 1 FSR. Get real-time MIDI over USB.">
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style"
-      onload="this.onload=null;this.rel='stylesheet'">
-    <noscript>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    </noscript>
-    <style>
-      @font-face {
-        font-family: 'SourceSansPro';
-        src: url('SourceSansPro.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-      }
-
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: 'SourceSansPro', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-      }
-
-      :root {
-        --primary: #004dff;
-        --primary-dark: #0008cc;
-        --secondary: #ffffff;
-        --dark: #0a0a0a;
-        --dark-lighter: #1a1a1a;
-        --text: #ffffff;
-        --text-muted: #a0a0a0;
-      }
-
-      /* Light theme colors */
-      @media (prefers-color-scheme: light) {
-        :root {
-          --dark: #ffffff;
-          --dark-lighter: #f5f5f5;
-          --text: #0a0a0a;
-          --text-muted: #666666;
-        }
-
-        body {
-          background: #ffffff;
-          color: #0a0a0a;
-        }
-
-
-
-        .bg-gradient {
-          background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 50%, #ffffff 100%) !important;
-        }
-
-        nav {
-          background: rgba(255, 255, 255, 0.7) !important;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
-        }
-
-        nav.scrolled {
-          background: rgba(255, 255, 255, 0.85) !important;
-        }
-
-        .nav-links a {
-          color: #0a0a0a;
-        }
-
-        .logo {
-          font-size: 1.8rem;
-          font-weight: normal !important;
-          /* Change this from 900 */
-          background: linear-gradient(135deg, #004dff, var(--text));
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .hero h1 {
-          background: linear-gradient(135deg, #004dff 0%, #0a0a0a 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .section-title {
-          background: linear-gradient(135deg, #004dff, #0a0a0a);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .section-content h2 {
-          background: linear-gradient(135deg, #004dff, #0a0a0a);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .hero-image img {
-          box-shadow: 0 30px 60px rgba(0, 16, 255, 0.15);
-        }
-
-
-
-        .hero p {
-          color: #666666;
-        }
-
-        .btn-primary {
-          color: #ffffff !important;
-        }
-
-        .download-link {
-          color: #ffffff !important;
-        }
-
-        .feature {
-          background: #ffffff !important;
-          border: 1px solid rgba(0, 0, 0, 0.1) !important;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .feature:hover {
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
-
-        .feature h3 {
-          color: #0a0a0a;
-        }
-
-        .feature p {
-          color: #666666;
-        }
-
-        .section-content p {
-          color: #666666;
-        }
-
-        .section-content ul li {
-          color: #666666;
-        }
-
-        .section-image img {
-          box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
-        }
-
-        .download-card {
-          background: #ffffff !important;
-          border: 1px solid rgba(0, 0, 0, 0.1) !important;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .download-card:hover {
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
-
-        .download-card h3 {
-          color: #0a0a0a;
-        }
-
-        .download-card p {
-          color: #666666;
-        }
-
-        .spec-card {
-          background: #ffffff !important;
-          border: 1px solid rgba(0, 0, 0, 0.1) !important;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-
-        .spec-card:hover {
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
-
-        .spec-card h3 {
-          color: #0a0a0a;
-        }
-
-        .spec-card ul li span:first-child {
-          color: #0a0a0a;
-        }
-
-        .spec-card ul li span:last-child {
-          color: #666666;
-        }
-
-        .spec-card ul li {
-          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-        }
-
-        footer {
-          border-top: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        footer p {
-          color: #666666;
-        }
-
-        .social-links a {
-          background: #f5f5f5 !important;
-          border: 1px solid rgba(0, 0, 0, 0.1);
-          color: #666666;
-        }
-
-        .modal {
-          background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-          background: #ffffff !important;
-          border: 1px solid rgba(0, 0, 0, 0.1);
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-        }
-
-        .close {
-          color: #666666;
-        }
-
-        .close:hover {
-          color: #0a0a0a;
-        }
-
-        .modal-title {
-          color: #0a0a0a;
-        }
-
-        .modal-info {
-          background: rgba(0, 16, 255, 0.05);
-          border: 1px solid rgba(0, 16, 255, 0.2);
-          color: #666666;
-        }
-
-        .modal-info strong {
-          color: #0a0a0a;
-        }
-
-        .modal-info code {
-          background: rgba(0, 16, 255, 0.1);
-          color: #004dff;
-        }
-
-        .modal-link-item {
-          background: rgba(0, 16, 255, 0.03) !important;
-          border: 1px solid rgba(0, 16, 255, 0.15) !important;
-        }
-
-        .modal-link-item:hover {
-          background: rgba(0, 16, 255, 0.08) !important;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .modal-link-text {
-          color: #0a0a0a;
-        }
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        background: var(--dark);
-        color: var(--text);
-        line-height: 1.6;
-        overflow-x: hidden;
-        transition: background-color 0.3s ease, color 0.3s ease;
-      }
-
-      /* Animated gradient background */
-      .bg-gradient {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -1;
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
-        animation: gradientShift 15s ease infinite;
-      }
-
-      @keyframes gradientShift {
-
-        0%,
-        100% {
-          opacity: 1;
-        }
-
-        50% {
-          opacity: 0.8;
-        }
-      }
-
-      /* Navigation */
-      nav {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        padding: 1.5rem 5%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        z-index: 1000;
-        background: rgba(10, 10, 10, 0.7);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-      }
-
-      nav.scrolled {
-        padding: 1rem 5%;
-        background: rgba(10, 10, 10, 0.85);
-      }
-
-      .logo {
-        font-size: 1.8rem;
-        font-weight: normal !important;
-        background: linear-gradient(135deg, #004dff, var(--text));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .nav-links {
-        display: flex;
-        gap: 2rem;
-        list-style: none;
-      }
-
-      .nav-links a {
-        color: var(--text);
-        text-decoration: none;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        position: relative;
-      }
-
-      .nav-links a::after {
-        content: '';
-        position: absolute;
-        bottom: -5px;
-        left: 0;
-        width: 0;
-        height: 2px;
-        background: var(--primary);
-        transition: width 0.3s ease;
-      }
-
-      .nav-links a:hover::after {
-        width: 100%;
-      }
-
-      /* Hero Section */
-      .hero {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 2rem;
-        padding-top: 120px;
-        position: relative;
-        overflow: hidden;
-        background: transparent;
-      }
-
-      .hero-decoration {
-        position: absolute;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #004dff, #ffffff);
-        opacity: 0.1;
-        animation: float 6s ease-in-out infinite;
-      }
-
-      .deco-1 {
-        width: 300px;
-        height: 300px;
-        top: 10%;
-        left: 5%;
-        animation-delay: 0s;
-      }
-
-      .deco-2 {
-        width: 200px;
-        height: 200px;
-        bottom: 20%;
-        right: 10%;
-        animation-delay: 2s;
-      }
-
-      @keyframes float {
-
-        0%,
-        100% {
-          transform: translateY(0) rotate(0deg);
-        }
-
-        50% {
-          transform: translateY(-20px) rotate(180deg);
-        }
-      }
-
-      .hero-content {
-        max-width: 900px;
-        z-index: 2;
-        position: relative;
-      }
-
-      .hero-image {
-        max-width: 500px;
-        width: 100%;
-        margin: 0 auto 2rem;
-        animation: fadeInUp 0.8s ease;
-        background: transparent;
-      }
-
-      .hero-image img {
-        width: 100%;
-        border-radius: 20px;
-        box-shadow: 0 30px 60px rgba(0, 16, 255, 0.0);
-        transition: transform 0.3s ease;
-      }
-
-      .hero-image img:hover {
-        transform: scale(1.02);
-      }
-
-      .hero h1 {
-        font-size: clamp(2.5rem, 4vw, 3rem);
-        font-weight: normal !important;
-        margin-bottom: 1.5rem;
-        background: linear-gradient(135deg, #004dff 0%, var(--text) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: fadeInUp 0.8s ease 0.2s backwards;
-      }
-
-      .hero p {
-        font-size: 1.25rem;
-        color: var(--text-muted);
-        margin-bottom: 1.5rem;
-        animation: fadeInUp 0.8s ease 0.4s backwards;
-      }
-
-      .cta-buttons {
-        display: flex;
-        gap: 1rem;
-        justify-content: center;
-        flex-wrap: wrap;
-        animation: fadeInUp 0.8s ease 0.6s backwards;
-        margin-top: 2rem;
-      }
-
-      .btn {
-        padding: 1rem 2.5rem;
-        border: none;
-        border-radius: 50px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-block;
-      }
-
-      .btn-primary {
-        background: linear-gradient(135deg, #004dff, #0008cc);
-        color: var(--text);
-        box-shadow: 0 10px 30px rgba(0, 16, 255, 0.3);
-      }
-
-      .btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 40px rgba(0, 16, 255, 0.5);
-      }
-
-      .btn-secondary {
-        background: transparent;
-        color: var(--text);
-        border: 2px solid var(--text);
-      }
-
-      .btn-secondary:hover {
-        background: var(--text);
-        color: var(--dark);
-        transform: translateY(-3px);
-      }
-
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-
-      .webapp {
-        padding: 2rem 5%;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-
-      /* Features Section */
-      .features {
-        padding: 8rem 5%;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .section-title {
-        text-align: center;
-        font-size: clamp(2rem, 4vw, 3rem);
-        margin-bottom: 4rem;
-        background: linear-gradient(135deg, #004dff, var(--text));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 2rem;
-      }
-
-      .feature {
-        background: var(--dark-lighter);
-        border-radius: 20px;
-        padding: 3rem 2rem;
-        text-align: center;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .feature::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, rgba(0, 16, 255, 0.1), rgba(255, 255, 255, 0.05));
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      }
-
-      .feature:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-      }
-
-      .feature:hover::before {
-        opacity: 1;
-      }
-
-      .feature-icon {
-        font-size: 3rem;
-        margin-bottom: 1.5rem;
-        color: #004dff;
-        position: relative;
-        z-index: 1;
-      }
-
-      .feature h3 {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        color: var(--text);
-        position: relative;
-        z-index: 1;
-      }
-
-      .feature p {
-        font-size: 1.05rem;
-        color: var(--text-muted);
-        line-height: 1.7;
-        position: relative;
-        z-index: 1;
-      }
-
-      /* Content Section */
-      .content-section {
-        padding: 8rem 5%;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-        align-items: center;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .content-section.reverse {
-        direction: rtl;
-      }
-
-      .content-section.reverse>* {
-        direction: ltr;
-      }
-
-      .section-content h2 {
-        font-size: clamp(2rem, 4vw, 3rem);
-        margin-bottom: 2rem;
-        background: linear-gradient(135deg, #004dff, var(--text));
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-
-      .section-content p {
-        color: var(--text-muted);
-        margin-bottom: 1.5rem;
-        font-size: 1.1rem;
-        line-height: 1.8;
-      }
-
-      .section-content ul {
-        list-style: none;
-        margin-top: 2rem;
-      }
-
-      .section-content ul li {
-        margin-bottom: 1rem;
-        padding-left: 2rem;
-        position: relative;
-        color: var(--text-muted);
-        font-size: 1.05rem;
-      }
-
-      /* Ensure Font Awesome is loaded before using its icons */
-      .section-content ul li:before {
-        content: '\f00c';
-        /* Unicode for Font Awesome solid checkmark */
-        font-family: 'Font Awesome 6 Free';
-        /* Correct Font Awesome font family */
-        font-weight: 900;
-        /* Correct font weight for solid icons */
-        position: absolute;
-        left: 0;
-        color: #004dff;
-        font-size: 1.2rem;
-        /* Optional: Add line-height if needed for vertical alignment */
-        /* line-height: 1; */
-      }
-
-      .section-image img {
-        width: 100%;
-        border-radius: 20px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-        transition: transform 0.3s ease;
-      }
-
-      .section-image:hover img {
-        transform: scale(1.02);
-      }
-
-      /* Software Section */
-      .software {
-        padding: 8rem 5%;
-        background: linear-gradient(135deg, rgba(0, 16, 255, 0.05), rgba(255, 255, 255, 0.02));
-      }
-
-      .software-content {
-        max-width: 1400px;
-        margin: 0 auto;
-        text-align: center;
-      }
-
-      .download-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        margin-top: 3rem;
-      }
-
-      .download-card {
-        background: var(--dark-lighter);
-        border-radius: 20px;
-        padding: 3rem 2rem;
-        text-align: center;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .download-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, #004dff, #ffffff);
-      }
-
-      .download-card.windows::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: #0078d7;
-      }
-
-      .download-card.mac::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: #bbbbbb;
-      }
-
-      .download-card.linux::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: #f7931e;
-      }
-
-      .download-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-      }
-
-      .download-card-icon {
-        font-size: 3rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .download-card.windows .download-card-icon {
-        color: #0078d7;
-      }
-
-      .download-card.linux .download-card-icon {
-        color: var(--text);
-      }
-
-      .download-card h3 {
-        font-size: 1.5rem;
-        margin-bottom: 1rem;
-        color: var(--text);
-      }
-
-      .download-card p {
-        font-size: 1.05rem;
-        color: var(--text-muted);
-        margin-bottom: 2rem;
-      }
-
-      .download-link {
-        display: inline-block;
-        padding: 1rem 2rem;
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        color: white;
-        border-radius: 50px;
-        font-weight: 600;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        box-shadow: 0 10px 30px rgba(77, 148, 255, 0.3);
-      }
-
-      .download-card.windows .download-link {
-        background: linear-gradient(135deg, #0078d7 0%, #005a9e 100%);
-        box-shadow: 0 10px 30px rgba(0, 120, 215, 0.3);
-      }
-
-      .download-card.linux .download-link {
-        background: linear-gradient(135deg, #f7931e 0%, #d35400 100%);
-        box-shadow: 0 10px 30px rgba(247, 147, 30, 0.3);
-      }
-
-      .download-card.mac .download-link {
-        background: #ffffff;
-        color: black !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      }
-
-      .download-link:hover {
-        transform: translateY(-2px);
-      }
-
-      .download-card.windows .download-link:hover {
-        box-shadow: 0 15px 40px rgba(0, 120, 215, 0.5);
-      }
-
-      .download-card.linux .download-link:hover {
-        box-shadow: 0 15px 40px rgba(247, 147, 30, 0.5);
-      }
-
-      /* Specs Section */
-      .specs {
-        padding: 8rem 5%;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-
-      .specs-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-      }
-
-      .spec-card {
-        background: var(--dark-lighter);
-        border-radius: 20px;
-        padding: 2.5rem;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-      }
-
-      .spec-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-      }
-
-      .spec-card h3 {
-        font-size: 1.5rem;
-        margin-bottom: 1.5rem;
-        color: var(--text);
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .spec-card h3 i {
-        color: #004dff;
-      }
-
-      .spec-card ul {
-        list-style: none;
-      }
-
-      .spec-card ul li {
-        padding: 1rem 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        display: flex;
-        justify-content: space-between;
-      }
-
-      .spec-card ul li:last-child {
-        border-bottom: none;
-      }
-
-      .spec-card ul li span:first-child {
-        font-weight: 500;
-        color: var(--text);
-      }
-
-      .spec-card ul li span:last-child {
-        color: var(--text-muted);
-      }
-
-      /* Footer */
-      footer {
-        padding: 4rem 5%;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        text-align: center;
-      }
-
-      .social-links {
-        display: flex;
-        gap: 1.5rem;
-        justify-content: center;
-        margin-bottom: 2rem;
-      }
-
-      .social-links a {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: var(--dark-lighter);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--text-muted);
-        font-size: 1.3rem;
-      }
-
-      .social-links a:hover {
-        background: var(--primary);
-        color: var(--text);
-        transform: translateY(-5px);
-        border-color: var(--primary);
-      }
-
-      footer p {
-        color: var(--text-muted);
-        margin: 0.5rem 0;
-      }
-
-      footer a {
-        color: #004dff;
-        text-decoration: none;
-        transition: color 0.3s ease;
-      }
-
-      footer a:hover {
-        color: #ffffff;
-      }
-
-      /* Modal Styles */
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(5px);
-      }
-
-      .modal-content {
-        background: var(--dark-lighter);
-        margin: 10% auto;
-        padding: 2.5rem;
-        border-radius: 20px;
-        width: 90%;
-        max-width: 500px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        position: relative;
-        animation: modalFadeIn 0.3s ease-out;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      @keyframes modalFadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .close {
-        position: absolute;
-        right: 1.5rem;
-        top: 1.5rem;
-        color: var(--text-muted);
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: color 0.3s ease;
-      }
-
-      .close:hover {
-        color: var(--text);
-      }
-
-      .modal-title {
-        text-align: center;
-        font-size: 1.8rem;
-        margin-bottom: 2rem;
-        color: var(--text);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-      }
-
-      .modal-info {
-        background: rgba(0, 16, 255, 0.1);
-        border: 1px solid rgba(0, 16, 255, 0.3);
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-        font-size: 0.95rem;
-        line-height: 1.6;
-        color: var(--text-muted);
-      }
-
-      .modal-info strong {
-        color: var(--text);
-      }
-
-      .modal-info code {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-family: monospace;
-        font-size: 1rem;
-        color: var(--text);
-      }
-
-      .modal-info a {
-        color: #004dff;
-        text-decoration: none;
-      }
-
-      .modal-info a:hover {
-        color: #ffffff;
-      }
-
-      .modal-links {
-        list-style: none;
-      }
-
-      .modal-link-item {
-        margin-bottom: 1rem;
-        background: rgba(0, 16, 255, 0.05);
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        border: 1px solid rgba(0, 16, 255, 0.2);
-        overflow: hidden;
-      }
-
-      .modal-link-item:hover {
-        background: rgba(0, 16, 255, 0.15);
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      }
-
-      .modal-link-content {
-        display: flex;
-        align-items: center;
-        padding: 1rem 1.5rem;
-        text-decoration: none;
-        color: inherit;
-      }
-
-      .modal-link-icon {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 1rem;
-        font-size: 1.5rem;
-        color: #004dff;
-      }
-
-      .modal-link-text {
-        font-size: 1.1rem;
-        font-weight: 600;
-        flex: 1;
-        color: var(--text);
-      }
-
-      .modal-link-arrow {
-        color: #004dff;
-        font-size: 1.2rem;
-        transition: transform 0.3s ease;
-      }
-
-      .modal-link-item:hover .modal-link-arrow {
-        transform: translateX(5px);
-      }
-
-      /* Responsive */
-      @media (max-width: 968px) {
-        .content-section {
-          grid-template-columns: 1fr;
-          gap: 3rem;
-        }
-
-        .content-section.reverse {
-          direction: ltr;
-        }
-      }
-
-      @media (max-width: 768px) {
-        nav {
-          padding: 1rem 4%;
-          flex-wrap: wrap;
-          gap: 1rem;
-        }
-
-        .nav-links {
-          gap: 1rem;
-          font-size: 0.9rem;
-        }
-
-        .hero {
-          padding-top: 120px;
-
-        }
-
-        .cta-buttons {
-          flex-direction: column;
-        }
-
-        .btn {
-          width: 100%;
-        }
-
-        .features,
-        .software,
-        .specs,
-        .content-section {
-          padding: 4rem 4%;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .nav-links {
-          width: 100%;
-          justify-content: space-around;
-          gap: 0.5rem;
-          font-size: 0.85rem;
-        }
-
-        .modal-content {
-          margin: 15% auto;
-          padding: 2rem;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="bg-gradient"></div>
-
-    <nav id="nav">
-      <div class="logo">NiftyDrum</div>
-      <ul class="nav-links">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#details">How It Works</a></li>
-        <li><a href="#software">Software</a></li>
-        <li><a href="#specs">Specs</a></li>
-      </ul>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="NiftyDrum: real-time MIDI &amp; sound trigger platform. Connect 9 piezos + 1 FSR, get &lt;2.5ms MIDI over USB, and build custom instruments with open Arduino SDKs. NiftyDrum+ adds a &lt;10ms sound engine.">
+<title>NiftyDrum – Real-time MIDI &amp; Sound Trigger Platform</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231e6bf1'/%3E%3Ccircle cx='32' cy='32' r='8' fill='white'/%3E%3Cpath d='M44 20a17 17 0 0 1 0 24M20 44a17 17 0 0 1 0-24' stroke='white' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS — LIGHT (default) ============ */
+:root{
+  color-scheme:light;
+  --bg:#f6f8fd; --card:#ffffff; --ink:#0d1b36; --mut:#5c6b85; --dim:#8d9ab2;
+  --line:#e4ebf6; --line2:#d3def0;
+  --blue:#1e6bf1; --blue-d:#0c47b8; --blue-t:#eaf1fe; --blue-t2:#f2f7ff; --cyan:#2fb6e8; --cyan-t:rgba(47,182,232,.13);
+  --band:rgba(30,107,241,.05);
+  --navy:#0b1b33;
+  --glow:rgba(30,107,241,.10); --glow-strong:rgba(30,107,241,.16);
+  --nav-bg:rgba(255,255,255,.86); --nav-bg-solid:#ffffff;
+  --btn-solid:#1e6bf1; --btn-solid-h:#0c47b8; --btn-glow:rgba(30,107,241,.5);
+  --hl-border:#dbe7fb;
+  --dot-bg:#ffffff; --dot-on:#ffffff;
+  --tag-color:#0c47b8; --emph:#0c47b8; --link-strong:#0c47b8;
+  --modal-bk:rgba(13,27,54,.45); --modal-sh:0 40px 90px -30px rgba(13,42,92,.4);
+  --cmd-bg:#f2f7ff;
+  --board-shadow:rgba(13,42,92,.18);
+  --social-on:#ffffff;
+  --icon-grad-start:#1e6bf1; --icon-grad-end:#2fb6e8;
+  --r:18px; --r-s:12px;
+  --sh:0 24px 50px -24px rgba(13,42,92,.18);
+  --sans:'Source Sans Pro','Source Sans 3',sans-serif;
+  --disp:var(--sans); --body:var(--sans); --logo:var(--sans);
+  --mono:'IBM Plex Mono',monospace;
+}
+/* ============ TOKENS — DARK (system preference) ============ */
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme:dark;
+    --bg:#0a1120; --card:#101b2e; --ink:#e8f0fb; --mut:#9db1c9; --dim:#6d82a0;
+    --line:rgba(148,184,255,.14); --line2:rgba(148,184,255,.26);
+    --blue:#4d9fff; --blue-d:#2f7fe0; --blue-t:rgba(77,159,255,.14); --blue-t2:rgba(77,159,255,.07); --cyan:#39d0e8; --cyan-t:rgba(57,208,232,.14);
+    --band:rgba(77,159,255,.05);
+    --navy:#060b14;
+    --glow:rgba(47,127,224,.16); --glow-strong:rgba(47,127,224,.22);
+    --nav-bg:rgba(10,17,32,.86); --nav-bg-solid:#0d1526;
+    --btn-solid:#2f7fe0; --btn-solid-h:#4d9fff; --btn-glow:rgba(47,127,224,.65);
+    --hl-border:rgba(77,159,255,.28);
+    --dot-bg:#0d1526; --dot-on:#081426;
+    --tag-color:#9ecbff; --emph:#9ecbff; --link-strong:#9ecbff;
+    --modal-bk:rgba(4,8,16,.72); --modal-sh:0 40px 90px -30px rgba(0,0,0,.7);
+    --cmd-bg:#0a1120;
+    --board-shadow:rgba(0,0,0,.45);
+    --social-on:#081426;
+    --icon-grad-start:#4d9fff; --icon-grad-end:#39d0e8;
+    --sh:0 24px 50px -24px rgba(0,0,0,.65);
+  }
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.6;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(900px 480px at 82% -120px, var(--glow), transparent 65%);}
+::selection{background:var(--blue);color:#fff}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.container{width:min(1140px,92%);margin-inline:auto;position:relative;z-index:2}
+section[id]{scroll-margin-top:88px}
+
+/* skip link */
+.skip{position:fixed;top:-60px;left:16px;z-index:200;background:var(--btn-solid);color:#fff;
+  padding:10px 18px;border-radius:10px;font-size:.85rem;font-weight:600;transition:top .25s}
+.skip:focus{top:12px}
+
+/* reveals */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.rv.in{opacity:1;transform:none}
+.ml{display:block;overflow:hidden}
+.ml>span{display:block;transform:translateY(110%);transition:transform .8s cubic-bezier(.2,.75,.15,1)}
+.in .ml>span{transform:none}
+.in .ml:nth-child(2)>span{transition-delay:.08s}
+.in .ml:nth-child(3)>span{transition-delay:.16s}
+
+/* ============ NAV ============ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:90;transition:background .3s,box-shadow .3s}
+.nav.scrolled{background:var(--nav-bg);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:74px}
+.logo{font-family:'Source Sans Pro','Source Sans 3',sans-serif;font-weight:700;font-size:1.55rem;letter-spacing:-.01em;color:var(--ink);
+  font-variant-ligatures:common-ligatures discretionary-ligatures;
+  -webkit-font-feature-settings:"liga" 1,"dlig" 1;font-feature-settings:"liga" 1,"dlig" 1}
+.nav-links{display:flex;align-items:center;gap:32px;font-size:.95rem;font-weight:400}
+.nav-links a{color:var(--mut);transition:color .25s;position:relative}
+.nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-5px;height:2px;border-radius:2px;
+  background:var(--blue);transition:right .3s ease}
+.nav-links a:hover{color:var(--blue)}
+.nav-links a.active{color:var(--blue)}
+.nav-links a.active::after{right:0}
+.nav-cta{font-size:.9rem;font-weight:600;background:var(--btn-solid);color:#fff;padding:10px 20px;border-radius:999px;
+  box-shadow:0 8px 18px -8px var(--btn-glow);transition:background .25s,transform .25s}
+.nav-cta:hover{background:var(--btn-solid-h);transform:translateY(-1px)}
+.burger{display:none;background:var(--blue-t);border:1px solid var(--line);color:var(--tag-color);
+  font-size:.72rem;letter-spacing:.12em;font-weight:600;padding:9px 16px;border-radius:999px;cursor:pointer}
+
+/* ============ BUTTONS ============ */
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:600;font-size:1rem;
+  padding:14px 28px;border-radius:var(--r-s);cursor:pointer;border:1px solid transparent;
+  transition:transform .25s,box-shadow .25s,background .25s,border-color .25s,color .25s}
+.btn.solid{background:var(--btn-solid);color:#fff;box-shadow:0 12px 24px -10px var(--btn-glow)}
+.btn.solid:hover{background:var(--btn-solid-h);transform:translateY(-2px);box-shadow:0 18px 32px -12px var(--btn-glow)}
+.btn.ghost{border-color:var(--line2);color:var(--ink);background:transparent}
+.btn.ghost:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-2px)}
+
+/* ============ HERO ============ */
+.hero{padding:168px 0 110px}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:64px;align-items:center}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(2.6rem,5vw,4rem);line-height:1.1;letter-spacing:-.015em}
+h1 .acc{color:var(--blue)}
+.hero-sub{color:var(--mut);font-size:1.1rem;max-width:50ch;margin:24px 0 34px}
+.hero-sub strong{color:var(--ink);font-weight:600}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap}
+.hero-stats{display:flex;gap:26px;flex-wrap:wrap;margin-top:44px;font-size:.9rem;color:var(--mut)}
+.hero-stats span{display:flex;align-items:center;gap:9px}
+.hero-stats b{color:var(--ink);font-weight:600}
+.hero-stats i{width:4px;height:4px;border-radius:50%;background:var(--blue);flex-shrink:0}
+
+.hero-visual{position:relative;display:grid;place-items:center;min-height:420px}
+.hv-glow{position:absolute;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(closest-side,var(--glow-strong),transparent 70%)}
+.hv-ring{position:absolute;border:1px solid var(--hl-border);border-radius:50%;animation:ringPulse 5s ease-in-out infinite}
+.hv-ring.r1{width:340px;height:340px}
+.hv-ring.r2{width:440px;height:440px;animation-delay:1.4s;border-color:rgba(57,208,232,.22)}
+@keyframes ringPulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.045);opacity:1}}
+.hv-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--sh);
+  padding:34px;width:min(380px,100%)}
+.hv-card img{filter:drop-shadow(0 18px 26px var(--board-shadow))}
+.hv-signal{display:flex;align-items:flex-end;gap:5px;height:26px;margin-top:26px;justify-content:center}
+.hv-signal i{width:4px;border-radius:3px;background:linear-gradient(180deg,var(--cyan),var(--blue));animation:eq 1.6s ease-in-out infinite}
+.hv-signal i:nth-child(1){height:30%}
+.hv-signal i:nth-child(2){height:70%;animation-delay:.15s}
+.hv-signal i:nth-child(3){height:100%;animation-delay:.3s}
+.hv-signal i:nth-child(4){height:55%;animation-delay:.45s}
+.hv-signal i:nth-child(5){height:80%;animation-delay:.6s}
+.hv-signal i:nth-child(6){height:40%;animation-delay:.75s}
+.hv-signal i:nth-child(7){height:65%;animation-delay:.9s}
+@keyframes eq{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1)}}
+.badge{position:absolute;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh);
+  padding:12px 18px;font-size:.8rem;color:var(--mut)}
+.badge b{display:block;font-family:var(--disp);font-size:1.05rem;color:var(--blue);font-weight:700;margin-top:2px}
+.badge.b1{top:6%;right:-2%;animation:float 6s ease-in-out infinite}
+.badge.b2{bottom:8%;left:-3%;animation:float 7s ease-in-out infinite reverse}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+
+/* ============ SECTIONS ============ */
+.sec{padding:112px 0}
+#specs{background:linear-gradient(180deg,transparent,var(--band) 12%,var(--band) 88%,transparent)}
+.shead{max-width:640px;margin-bottom:60px}
+.s-kicker{font-family:var(--mono);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;color:var(--blue);margin-bottom:14px}
+.s-title{font-family:var(--disp);font-weight:700;font-size:clamp(1.85rem,3.4vw,2.7rem);line-height:1.15;letter-spacing:-.01em}
+.s-sub{color:var(--mut);margin-top:16px;font-size:1.04rem}
+
+/* ============ FEATURES ============ */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.f-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:36px 32px;
+  transition:box-shadow .35s,border-color .35s;display:flex;flex-direction:column}
+.f-card:hover{box-shadow:var(--sh);border-color:var(--line2)}
+.f-card.hl{background:var(--blue-t2);border-color:var(--hl-border)}
+.f-icon{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--icon-grad-start),var(--icon-grad-end));
+  display:grid;place-items:center;margin-bottom:24px;box-shadow:0 8px 20px -8px var(--btn-glow);position:relative;overflow:hidden}
+.f-icon::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);pointer-events:none}
+.f-icon svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1}
+.f-icon .die{fill:#fff;stroke:none}
+.f-card h3{font-family:var(--disp);font-size:1.25rem;font-weight:700;margin-bottom:10px;letter-spacing:-.01em}
+.f-card p{color:var(--mut);font-size:.98rem;flex:1}
+.f-spec{margin-top:24px;padding-top:18px;border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+
+/* ============ HOW IT WORKS ============ */
+.how-wrap{display:grid;grid-template-columns:.85fr 1.15fr;gap:80px;align-items:start}
+.how-sticky{position:sticky;top:120px}
+.how-sticky p{color:var(--mut);margin-top:16px;max-width:36ch}
+.how-img{margin-top:36px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--sh);padding:22px;width:min(340px,100%)}
+.how-img img{filter:drop-shadow(0 14px 22px var(--board-shadow))}
+.how-img figcaption{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--dim);padding-top:16px}
+.steps{position:relative;padding-left:52px}
+.steps-line{position:absolute;left:17px;top:10px;bottom:10px;width:2px;background:var(--line);border-radius:2px}
+.steps-fill{position:absolute;left:17px;top:10px;width:2px;height:0;border-radius:2px;
+  background:linear-gradient(180deg,var(--cyan),var(--blue))}
+.step{position:relative;padding-bottom:52px}
+.step:last-child{padding-bottom:0}
+.step-dot{position:absolute;left:-52px;top:0;width:36px;height:36px;border-radius:50%;background:var(--dot-bg);
+  border:2px solid var(--line2);display:grid;place-items:center;font-family:var(--mono);font-size:.72rem;
+  color:var(--dim);transition:all .4s}
+.step.on .step-dot{border-color:var(--blue);background:var(--blue);color:var(--dot-on);box-shadow:0 8px 18px -8px var(--btn-glow)}
+.step h4{font-family:var(--disp);font-size:1.2rem;font-weight:700;margin-bottom:6px;letter-spacing:-.01em}
+.step p{color:var(--mut);font-size:.98rem;max-width:52ch}
+
+/* ============ NIFTYDRUM+ ============ */
+.plus-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.plus-visual{position:relative;display:grid;place-items:center}
+.plus-visual::before{content:"";position:absolute;inset:6% -4%;border-radius:50%;
+  background:radial-gradient(closest-side,var(--glow-strong),transparent);z-index:0}
+.plus-visual img{position:relative;z-index:1;width:min(520px,100%);
+  filter:drop-shadow(0 28px 40px var(--board-shadow))}
+.plus-stats{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:30px}
+.p-stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;box-shadow:var(--sh)}
+.p-stat b{display:block;font-family:var(--disp);font-size:1.6rem;font-weight:700;color:var(--blue);letter-spacing:-.01em}
+.p-stat span{font-size:.86rem;color:var(--mut)}
+.feat-list{display:grid;grid-template-columns:1fr 1fr;gap:26px 34px;margin-top:30px}
+.feat{display:flex;gap:14px}
+.feat .tick{flex-shrink:0;width:22px;height:22px;border-radius:7px;background:var(--blue-t);color:var(--blue);
+  display:grid;place-items:center;font-size:.72rem;font-weight:700;margin-top:3px}
+.feat b{display:block;font-size:.98rem;font-weight:600}
+.feat span{font-size:.88rem;color:var(--mut)}
+
+/* ============ SDK ============ */
+.sdk-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.sdk-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;
+  display:flex;flex-direction:column;transition:box-shadow .35s,border-color .35s}
+.sdk-card:hover{box-shadow:var(--sh);border-color:var(--line2)}
+.sdk-card.sensor{--acc:var(--blue);--acc-t:var(--blue-t)}
+.sdk-card.sound{--acc:var(--cyan);--acc-t:var(--cyan-t)}
+.sdk-head{display:flex;align-items:center;gap:14px;padding:18px 28px;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);background:var(--blue-t2)}
+.sdk-chip{width:36px;height:36px;border-radius:10px;background:var(--acc-t);display:grid;place-items:center;flex-shrink:0}
+.sdk-chip svg{width:22px;height:22px;fill:none;stroke:var(--acc);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.sdk-chip .die{fill:var(--acc);stroke:none}
+.sdk-body{padding:32px;display:flex;flex-direction:column;gap:24px;flex:1}
+.sdk-body>p{color:var(--mut);font-size:.98rem}
+.sdk-tags{display:flex;gap:8px;flex-wrap:wrap}
+.sdk-tags span{font-family:var(--mono);font-size:.7rem;color:var(--tag-color);background:var(--blue-t);
+  padding:6px 13px;border-radius:999px}
+.sdk-feats{display:grid;gap:16px}
+.sdk-feat{display:flex;gap:14px;font-size:.92rem}
+.sdk-feat::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--acc);flex-shrink:0;margin-top:9px}
+.sdk-feat b{font-weight:600}
+.sdk-feat span{color:var(--mut)}
+.sdk-foot{margin-top:auto;padding-top:8px}
+
+/* ============ SPECS ============ */
+.specs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.spec-col{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.spec-col h4{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+  padding:20px 30px;border-bottom:1px solid var(--line);color:var(--blue);background:var(--blue-t2)}
+.spec-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+  padding:16px 30px;border-bottom:1px solid var(--line);transition:background .25s}
+.spec-row:last-child{border-bottom:0}
+.spec-row:hover{background:var(--blue-t2)}
+.spec-row dt{font-size:.94rem;color:var(--mut)}
+.spec-row dd{font-family:var(--mono);font-size:.82rem;color:var(--ink);text-align:right}
+.spec-row dd em{font-style:normal;color:var(--blue);font-weight:500}
+
+/* ============ SOFTWARE / OS ============ */
+.soft-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:22px;margin-bottom:22px}
+.webapp{background:linear-gradient(135deg,var(--blue-t2),var(--card));border:1px solid var(--hl-border);
+  border-radius:var(--r);padding:48px;display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden}
+.webapp::after{content:"";position:absolute;right:-70px;bottom:-70px;width:260px;height:260px;border-radius:50%;
+  background:radial-gradient(closest-side,var(--glow-strong),transparent);pointer-events:none}
+.webapp h3{font-family:var(--disp);font-size:1.75rem;font-weight:700;letter-spacing:-.01em}
+.webapp p{color:var(--mut);max-width:46ch}
+.webapp .url{font-family:var(--mono);font-size:.8rem;color:var(--blue)}
+.os-stack{display:grid;gap:22px}
+.os-col{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.os-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:30px;
+  display:flex;flex-direction:column;gap:8px;transition:box-shadow .3s,border-color .3s}
+.os-card:hover{box-shadow:var(--sh);border-color:var(--os-line)}
+.os-card .os-icon{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;margin-bottom:12px;position:relative;overflow:hidden}
+.os-card .os-icon::before{content:"";position:absolute;inset:0;opacity:.12;pointer-events:none;background:linear-gradient(135deg,rgba(255,255,255,.2),transparent)}
+.os-card.win .os-icon{background:linear-gradient(135deg,#0078d4,#00bcf2)}
+.os-card.ubu .os-icon{background:linear-gradient(135deg,#e95420,#f7931e)}
+.os-card.mac .os-icon{background:linear-gradient(135deg,#5b6572,#8e9aab)}
+.os-card .os-icon svg{width:28px;height:28px;color:#fff;position:relative;z-index:1}
+.os-card b{font-family:var(--disp);font-size:1.1rem;font-weight:700}
+.os-card small{color:var(--dim);font-size:.85rem;margin-bottom:14px}
+.os-btn{font-size:.86rem;font-weight:600;text-align:center;border:1px solid var(--line2);padding:11px;
+  color:var(--ink);border-radius:var(--r-s);cursor:pointer;background:transparent;transition:all .25s;margin-top:auto;
+  display:block;font-family:var(--body)}
+.os-btn:hover{border-color:var(--os);color:var(--os);background:var(--os-soft)}
+.os-card.win{--os:#0078d4;--os-soft:rgba(0,120,212,.08);--os-line:rgba(0,120,212,.45)}
+.os-card.ubu{--os:#e95420;--os-soft:rgba(233,84,32,.08);--os-line:rgba(233,84,32,.45)}
+.os-card.mac{--os:#5b6572;--os-soft:rgba(91,101,114,.08);--os-line:rgba(91,101,114,.40)}
+@media (prefers-color-scheme: dark){
+  .os-card.win{--os:#4cc3ff;--os-soft:rgba(76,195,255,.10);--os-line:rgba(76,195,255,.45)}
+  .os-card.win .os-icon{background:linear-gradient(135deg,#0078d4,#4cc3ff)}
+  .os-card.ubu{--os:#ff6a3d;--os-soft:rgba(255,106,61,.10);--os-line:rgba(255,106,61,.45)}
+  .os-card.ubu .os-icon{background:linear-gradient(135deg,#e95420,#ff6a3d)}
+  .os-card.mac{--os:#c2cfdf;--os-soft:rgba(194,207,223,.08);--os-line:rgba(194,207,223,.40)}
+  .os-card.mac .os-icon{background:linear-gradient(135deg,#5b6572,#c2cfdf)}
+}
+
+/* ============ FOOTER ============ */
+footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-top:60px;border-top:1px solid var(--line)}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;padding:76px 0 54px}
+footer .logo{color:#fff}
+.foot-tag{font-family:var(--mono);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:#6fa8ff;margin-top:14px}
+.foot-grid p{color:#8fa0bd;font-size:.92rem;max-width:34ch;margin-top:10px}
+.foot-grid h5{font-family:var(--mono);font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:#7286a6;margin-bottom:22px}
+.foot-grid ul{list-style:none;display:grid;gap:13px}
+.foot-grid ul a{color:#c6d2e6;font-size:.94rem;transition:color .25s,padding-left .25s}
+.foot-grid ul a:hover{color:#6fa8ff;padding-left:6px}
+.socials{display:flex;gap:10px;margin-top:26px}
+.socials a{width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.16);
+  display:grid;place-items:center;color:#c6d2e6;transition:all .25s;position:relative;overflow:hidden}
+.socials a::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,var(--blue),var(--cyan));opacity:0;transition:opacity .25s}
+.socials a svg{width:18px;height:18px;fill:currentColor;position:relative;z-index:1}
+.socials a:hover{border-color:transparent;color:#fff;transform:translateY(-3px)}
+.socials a:hover::before{opacity:1}
+.foot-bot{border-top:1px solid rgba(255,255,255,.1);padding:24px 0;display:flex;justify-content:space-between;gap:16px;
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;color:#7286a6;flex-wrap:wrap}
+
+/* ============ MODALS ============ */
+.modal{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:20px;
+  visibility:hidden;opacity:0;transition:opacity .3s,visibility .3s}
+.modal.open{visibility:visible;opacity:1}
+.modal-bk{position:absolute;inset:0;background:var(--modal-bk);backdrop-filter:blur(6px)}
+.modal-card{position:relative;width:min(470px,100%);background:var(--card);border:1px solid var(--line2);
+  border-radius:22px;box-shadow:var(--modal-sh);
+  padding:42px;transform:translateY(22px) scale(.97);transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.modal.open .modal-card{transform:none}
+.modal-card h3{font-family:var(--disp);font-size:1.4rem;font-weight:700;margin-bottom:14px;letter-spacing:-.01em}
+.modal-card .warn{color:var(--mut);font-size:.95rem;margin-bottom:22px}
+.modal-card .warn b{color:var(--emph)}
+.modal-x{position:absolute;top:16px;right:16px;background:var(--blue-t);border:none;color:var(--emph);
+  width:34px;height:34px;border-radius:10px;font-size:.95rem;cursor:pointer;transition:all .25s}
+.modal-x:hover{background:var(--blue);color:var(--dot-on)}
+.modal-card .btn{width:100%;justify-content:center;margin-top:12px}
+.cmd{display:flex;align-items:center;gap:12px;background:var(--cmd-bg);border:1px solid var(--line);
+  border-radius:var(--r-s);padding:13px 16px;font-family:var(--mono);font-size:.78rem;color:var(--emph);margin-bottom:22px}
+.cmd button{margin-left:auto;background:transparent;border:1px solid var(--line2);color:var(--mut);
+  font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;padding:5px 11px;border-radius:8px;cursor:pointer;transition:all .25s}
+.cmd button:hover{color:var(--blue);border-color:var(--blue)}
+.distro{display:grid;gap:10px}
+.distro a{display:flex;align-items:center;gap:14px;border:1px solid var(--line);border-radius:var(--r-s);
+  padding:14px 18px;font-size:.94rem;color:var(--ink);transition:all .25s}
+.distro a:hover{border-color:var(--blue);background:var(--blue-t2);color:var(--link-strong)}
+.distro a .distro-icon{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;flex-shrink:0}
+.distro a .distro-icon.ubu{background:linear-gradient(135deg,#e95420,#ff6a3d)}
+.distro a .distro-icon.deb{background:#fff;border:1px solid var(--line)}
+.distro a .distro-icon svg{width:17px;height:17px;color:#fff}
+.distro a .distro-icon.deb img{width:16px;height:16px;object-fit:contain}
+
+/* ============ TOAST (status messages) ============ */
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(12px);z-index:200;
+  background:var(--ink);color:var(--bg);font-size:.85rem;font-weight:600;padding:12px 20px;border-radius:12px;
+  box-shadow:var(--sh);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:1020px){
+  .hero-grid,.plus-grid,.how-wrap{grid-template-columns:1fr;gap:56px}
+  .how-sticky{position:static}
+  .feat-grid,.specs-grid,.sdk-grid{grid-template-columns:1fr}
+  .soft-grid,.os-col{grid-template-columns:1fr}
+  .hero-visual{min-height:0;margin-top:12px}
+}
+@media(max-width:760px){
+  .nav-links{display:none;position:absolute;top:74px;left:0;right:0;background:var(--nav-bg-solid);
+    flex-direction:column;align-items:flex-start;padding:26px 6%;gap:20px;border-bottom:1px solid var(--line)}
+  .nav-links.open{display:flex}
+  .nav-links a::after{display:none}
+  .burger{display:block}
+  .nav-cta{display:none}
+  .feat-list,.plus-stats{grid-template-columns:1fr}
+  .sec{padding:84px 0}
+  .hero{padding:140px 0 80px}
+  .foot-grid{grid-template-columns:1fr;gap:38px}
+  .badge.b1{right:2%}.badge.b2{left:2%}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .rv{opacity:1;transform:none}
+  .ml>span{transform:none}
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#top">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="container nav-in">
+    <a class="logo" href="#top">NiftyDrum</a>
+    <nav class="nav-links" id="navLinks" aria-label="Main navigation">
+      <a href="#features">Features</a>
+      <a href="#plus">NiftyDrum+</a>
+      <a href="#sdk">SDK</a>
+      <a href="#specs">Specs</a>
+      <a href="#software">Software</a>
     </nav>
+    <a class="nav-cta" href="https://app.niftydrum.com" target="_blank" rel="noopener">Web App</a>
+    <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">MENU</button>
+  </div>
+</header>
 
-    <section class="hero">
-      <div class="hero-decoration deco-1"></div>
-      <div class="hero-decoration deco-2"></div>
-      <div class="hero-content">
-        <div class="hero-image">
-          <picture>
-            <source srcset="nd-logo.png" media="(prefers-color-scheme: light)">
-            <img src="nd-logo-dark.png" alt="NiftyDrum Logo">
-          </picture>
+<section class="hero" id="top">
+  <div class="container hero-grid">
+    <div class="rv in">
+      <h1>
+        <span class="ml"><span>The ultimate</span></span>
+        <span class="ml"><span><span class="acc">MIDI &amp; sound</span></span></span>
+        <span class="ml"><span>trigger.</span></span>
+      </h1>
+      <p class="hero-sub">From ultra-low latency MIDI drum modules to custom instruments. Connect up to
+        <strong>9 piezos + 1 FSR</strong>, and build anything with our SDKs.</p>
+      <div class="hero-ctas">
+        <a class="btn solid" href="#sdk">Explore our SDKs</a>
+        <a class="btn ghost" href="https://doc.niftydrum.com/" target="_blank" rel="noopener">Read Documentation</a>
+      </div>
+      <div class="hero-stats">
+        <span><i></i><b>&lt;2.5ms</b> MIDI latency</span>
+        <span><i></i><b>&lt;10ms</b> sensor → audio on NiftyDrum+</span>
+        <span><i></i><b>USB-C</b> plug &amp; play</span>
+      </div>
+    </div>
+
+    <div class="hero-visual rv in" style="--d:.15s">
+      <div class="hv-glow" aria-hidden="true"></div>
+      <div class="hv-ring r1" aria-hidden="true"></div>
+      <div class="hv-ring r2" aria-hidden="true"></div>
+      <figure class="hv-card">
+        <img src="https://ronnatech.com/wp-content/uploads/ndp_small.png" alt="NiftyDrum+ board" fetchpriority="high">
+        <div class="hv-signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </figure>
+      <div class="badge b1">NiftyDrum+<b>&lt;10ms sensor → audio</b></div>
+      <div class="badge b2">Inputs<b>9 piezo + 1 FSR</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="features">
+  <div class="container">
+    <header class="shead rv">
+      <p class="s-kicker">Core Capabilities</p>
+      <h2 class="s-title">Hardware for musicians and makers.</h2>
+    </header>
+    <div class="feat-grid">
+      <article class="f-card rv">
+        <div class="f-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M17 6.8a7.5 7.5 0 0 1 0 10.4"/>
+            <path d="M7 17.2a7.5 7.5 0 0 1 0-10.4"/>
+            <path d="M20 4a11.5 11.5 0 0 1 0 16"/>
+            <path d="M4 20a11.5 11.5 0 0 1 0-16"/>
+          </svg>
         </div>
-        <h1>Real-time MIDI Trigger Module</h1>
-        <p>Connect up to 9 piezos and 1 FSR. Get real-time MIDI over USB.</p>
-        <p>Flawless performance with ultra-low latency.</p>
-        <div class="cta-buttons">
-          <a href="#software" class="btn btn-primary" id="dl-button">Download Software</a>
-          <a href="#specs" class="btn btn-secondary">View Specs</a>
+        <h3>9 Piezos + 1 FSR</h3>
+        <p>Plug your pads into the terminal blocks and start playing right away.</p>
+        <div class="f-spec">9× piezo · 1× FSR · terminal blocks</div>
+      </article>
+
+      <article class="f-card hl rv" style="--d:.1s">
+        <div class="f-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M13 2L4.5 13.5h6.5l-1.5 8.5L19 9.5h-6.5L13 2z"/>
+          </svg>
+        </div>
+        <h3>Low-Latency</h3>
+        <p>Lightning-fast MIDI over USB with less than 2.5ms latency.</p>
+        <div class="f-spec">&lt;2.5ms · USB-MIDI class compliant</div>
+      </article>
+
+      <article class="f-card rv" style="--d:.2s">
+        <div class="f-icon">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6.5" y="6.5" width="11" height="11" rx="1.5"/>
+            <circle class="die" cx="9.6" cy="9.6" r="1.05"/>
+            <path d="M9.5 6.5v-3M12 6.5v-3M14.5 6.5v-3M9.5 20.5v-3M12 20.5v-3M14.5 20.5v-3M6.5 9.5h-3M6.5 12h-3M6.5 14.5h-3M20.5 9.5h-3M20.5 12h-3M20.5 14.5h-3"/>
+          </svg>
+        </div>
+        <h3>Open Platform</h3>
+        <p>Build your own custom instruments with our Arduino-compatible SDKs.</p>
+        <div class="f-spec">Arduino IDE · C++ · STM32</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="how">
+  <div class="container how-wrap">
+    <div class="how-sticky rv">
+      <p class="s-kicker">How It Works</p>
+      <h2 class="s-title">From pad to MIDI in 5 steps.</h2>
+      <p>NiftyDrum delivers a complete path from piezo hit to sound — wire it, map it, play it.</p>
+      <figure class="how-img">
+        <img src="https://ronnatech.com/wp-content/uploads/2025/08/IMG_0361-bgr.png" alt="NiftyDrum trigger-to-MIDI board" loading="lazy">
+        <figcaption>NiftyDrum — trigger-to-MIDI module</figcaption>
+      </figure>
+    </div>
+    <div class="steps" id="steps">
+      <div class="steps-line" aria-hidden="true"></div>
+      <div class="steps-fill" id="stepsFill" aria-hidden="true"></div>
+      <div class="step rv"><span class="step-dot">1</span>
+        <h4>Wire up</h4><p>Connect up to 9 piezos and 1 FSR to the terminal blocks.</p>
+      </div>
+      <div class="step rv"><span class="step-dot">2</span>
+        <h4>Plug in</h4><p>Plug into your DAW or drum module via USB.</p>
+      </div>
+      <div class="step rv"><span class="step-dot">3</span>
+        <h4>Shape</h4><p>Use our GUI for trigger parameters, mapping and velocity shaping.</p>
+      </div>
+      <div class="step rv"><span class="step-dot">4</span>
+        <h4>Play</h4><p>Notes stream out instantly with zero perceivable latency.</p>
+      </div>
+      <div class="step rv"><span class="step-dot">5</span>
+        <h4>Unleash</h4><p>Use the NiftyDrum+ sound engine and get a fully-featured drum module.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="plus">
+  <div class="container">
+    <div class="plus-grid">
+      <div class="rv">
+        <p class="s-kicker">NiftyDrum+ Extension</p>
+        <h2 class="s-title">Meet NiftyDrum+</h2>
+        <p class="s-sub">Take your builds to the next level with NiftyDrum+, a single, unified board combining our sensor-to-MIDI interface with a powerful sound engine. High quality sounds thanks to our modular sound engine.</p>
+
+        <div class="plus-stats">
+          <div class="p-stat"><b>&lt;10ms</b><span>total latency, sensor → audio</span></div>
+          <div class="p-stat"><b>44.1 / 48kHz</b><span>WAV samples, high quality</span></div>
+        </div>
+
+        <div class="feat-list">
+          <div class="feat"><span class="tick">✓</span><div><b>All-in-One</b><span>Sensors + sound generation on a single board.</span></div></div>
+          <div class="feat"><span class="tick">✓</span><div><b>Ultra-Low Latency</b><span>Total system latency (sensor to audio) is &lt;10ms.</span></div></div>
+          <div class="feat"><span class="tick">✓</span><div><b>High Audio Quality</b><span>Wav samples with 44.1kHz or 48kHz sample rate.</span></div></div>
+          <div class="feat"><span class="tick">✓</span><div><b>Velocity Layers</b><span>Supported up to any number of layers.</span></div></div>
+          <div class="feat"><span class="tick">✓</span><div><b>Ready to Play</b><span>Comes with a pre-installed drum module firmware.</span></div></div>
         </div>
       </div>
-    </section>
+      <div class="plus-visual rv" style="--d:.12s">
+        <img src="https://ronnatech.com/wp-content/uploads/ndp_small.png" alt="NiftyDrum+ board with sound engine" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
 
-    <section class="features" id="features">
-      <h2 class="section-title">Features</h2>
-      <div class="features-grid">
-        <div class="feature">
-          <div class="feature-icon">
-            <i class="fas fa-plug"></i>
-          </div>
-          <h3>9 Piezos + 1 FSR</h3>
-          <p>Simply plug your pads into the board and start playing immediately.</p>
+<section class="sec" id="sdk">
+  <div class="container">
+    <header class="shead rv">
+      <p class="s-kicker">More Than Just Drums</p>
+      <h2 class="s-title">A blank canvas for makers.</h2>
+      <p class="s-sub">Thanks to our open, Arduino-compatible SDKs, NiftyDrum+ lets you create a custom drum module, interactive music boxes, or entirely new instruments.</p>
+    </header>
+
+    <div class="sdk-grid">
+      <article class="sdk-card sensor rv">
+        <div class="sdk-head">
+          <span class="sdk-chip">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="3.4"/>
+              <path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"/>
+              <path d="M6.5 6.5l2.1 2.1M15.4 15.4l2.1 2.1M6.5 17.5l2.1-2.1M15.4 8.6l2.1-2.1"/>
+            </svg>
+          </span>
+          Sensor SDK · STM32F1
         </div>
-        <div class="feature">
-          <div class="feature-icon">
-            <i class="fas fa-bolt"></i>
+        <div class="sdk-body">
+          <p>Arduino-compatible library for the sensor-to-MIDI interface. Read piezos and FSR, customize trigger logic, and stream MIDI over USB.</p>
+          <div class="sdk-tags"><span>STM32F1</span><span>C++</span><span>USB MIDI</span></div>
+          <div class="sdk-feats">
+            <div class="sdk-feat"><div><b>Fast trigger readings</b><br><span>Read trigger states from ADC with incredibly low latency.</span></div></div>
+            <div class="sdk-feat"><div><b>Native USB MIDI</b><br><span>Stream MIDI over USB at full speed.</span></div></div>
+            <div class="sdk-feat"><div><b>Stable ARM Toolchain</b><br><span>ARM None-EABI (gcc-arm-none-eabi).</span></div></div>
           </div>
-          <h3>Low-Latency MIDI</h3>
-          <p>Lightning-fast MIDI over USB with less than 2.5ms latency.</p>
+          <div class="sdk-foot"><a class="btn ghost" href="https://ronnatech.com/sdm_downloads/arduino_stm32/" target="_blank" rel="noopener">Read Documentation</a></div>
         </div>
-        <div class="feature">
-          <div class="feature-icon">
-            <i class="fas fa-rocket"></i>
-          </div>
-          <h3>Plug & Play</h3>
-          <p>Connect and play immediately. No drivers or complicated setup required.</p>
+      </article>
+
+      <article class="sdk-card sound rv" style="--d:.12s">
+        <div class="sdk-head">
+          <span class="sdk-chip">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 10v4M8 6.5v11M12 3.5v17M16 6.5v11M20 10v4"/>
+            </svg>
+          </span>
+          Sound SDK · STM32F401
         </div>
-        <div class="feature">
-          <div class="feature-icon">
-            <i class="fas fa-sliders-h"></i>
+        <div class="sdk-body">
+          <p>Control the sound engine. Trigger samples via the WaveTooEasy library, synthesize audio, and build custom audio logic for your unique instrument.</p>
+          <div class="sdk-tags"><span>STM32F401</span><span>Audio</span><span>WaveTooEasy</span></div>
+          <div class="sdk-feats">
+            <div class="sdk-feat"><div><b>WaveTooEasy Integration</b><br><span>Polyphonic sample triggering &amp; routing.</span></div></div>
+            <div class="sdk-feat"><div><b>STM32F401 Core</b><br><span>MIDI in, digital and analog inputs.</span></div></div>
+            <div class="sdk-feat"><div><b>Arduino IDE Ready</b><br><span>Install via Artekit Board Manager URL.</span></div></div>
           </div>
-          <h3>Configurable</h3>
-          <p>Assign notes and tweak trigger parameters in our intuitive user interface.</p>
+          <div class="sdk-foot"><a class="btn ghost" href="https://github.com/RonnaTechnologies/artekit_stm32f401-core" target="_blank" rel="noopener">View on GitHub</a></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="specs">
+  <div class="container">
+    <header class="shead rv">
+      <p class="s-kicker">Technical Specifications</p>
+      <h2 class="s-title">Specs at a glance.</h2>
+    </header>
+    <div class="specs-grid">
+      <dl class="spec-col rv">
+        <h4>Hardware</h4>
+        <div class="spec-row"><dt>Inputs</dt><dd><em>9 Piezo + 1 FSR</em></dd></div>
+        <div class="spec-row"><dt>Connectors</dt><dd>Terminal blocks</dd></div>
+        <div class="spec-row"><dt>USB</dt><dd>USB 2.0 Type-C</dd></div>
+        <div class="spec-row"><dt>Audio</dt><dd>TRS 3.5mm (⅛")</dd></div>
+      </dl>
+      <dl class="spec-col rv" style="--d:.1s">
+        <h4>Performance</h4>
+        <div class="spec-row"><dt>MIDI Latency</dt><dd><em>&lt;2.5ms</em></dd></div>
+        <div class="spec-row"><dt>Trigger to Sound</dt><dd><em>&lt;10ms</em></dd></div>
+        <div class="spec-row"><dt>Sampling Rate</dt><dd>&gt;10kHz</dd></div>
+        <div class="spec-row"><dt>Audio Rate</dt><dd>≥44.1kHz</dd></div>
+      </dl>
+      <dl class="spec-col rv" style="--d:.2s">
+        <h4>Software</h4>
+        <div class="spec-row"><dt>Compatibility</dt><dd>Win / Mac / Linux</dd></div>
+        <div class="spec-row"><dt>Interface</dt><dd>Web-based GUI</dd></div>
+        <div class="spec-row"><dt>Firmware</dt><dd>USB Updates</dd></div>
+        <div class="spec-row"><dt>Development</dt><dd>Arduino SDKs</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="software">
+  <div class="container">
+    <header class="shead rv">
+      <p class="s-kicker">Configuration Software</p>
+      <h2 class="s-title">Map notes. Shape velocity.</h2>
+    </header>
+
+    <div class="soft-grid">
+      <div class="webapp rv">
+        <p class="s-kicker" style="margin:0">Browser-based · No install</p>
+        <h3>Use the Web App</h3>
+        <p>Use our official apps to configure the pre-installed drum module firmware. Map MIDI notes, tweak trigger parameters, and fine-tune velocity curves. Want to write your own code? Check out the SDKs above!</p>
+        <span class="url">https://app.niftydrum.com</span>
+        <div><a class="btn solid" href="https://app.niftydrum.com" target="_blank" rel="noopener">Use the Web App</a></div>
+      </div>
+      <div class="os-stack rv" style="--d:.1s">
+        <div class="os-card win" style="flex:1">
+          <div class="os-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 5.5 10 4.6v6.9H3zM11 4.4 21 3v8.5H11zM3 12.6h7v6.9l-7-.9zM11 12.6h10V21l-10-1.4z"/></svg>
+          </div>
+          <b>Windows</b><small>Compatible with Windows 10 &amp; 11</small>
+          <button class="os-btn" data-modal="winModal">Download</button>
+        </div>
+        <div class="os-card ubu" style="flex:1">
+          <div class="os-icon">
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+              <circle cx="24" cy="24" r="13" fill="none" stroke="currentColor" stroke-width="6.5" stroke-dasharray="17.2 10.03"/>
+              <circle cx="22.19" cy="36.87" r="4.5" fill="currentColor"/>
+              <circle cx="13.76" cy="16.0" r="4.5" fill="currentColor"/>
+              <circle cx="36.05" cy="19.13" r="4.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <b>Linux</b><small>Ubuntu 22.04+, Debian</small>
+          <button class="os-btn" data-modal="linuxModal">Download</button>
+        </div>
+        <div class="os-card mac" style="flex:1">
+          <div class="os-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.6 12.7c0-2.2 1.8-3.2 1.9-3.3-1-1.5-2.6-1.7-3.2-1.7-1.4-.1-2.7.8-3.3.8-.7 0-1.8-.8-2.9-.8-1.5 0-2.9.9-3.7 2.2-1.6 2.7-.4 6.8 1.1 9 .8 1.1 1.7 2.3 2.8 2.3 1.1 0 1.6-.7 2.9-.7s1.7.7 2.9.7c1.2 0 2-1.1 2.7-2.2.9-1.3 1.2-2.5 1.2-2.6-.1 0-2.5-.9-2.4-3.7zM14.4 5.6c.6-.7 1-1.7.9-2.6-.9 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.5 1 .1 2-.5 2.5-1.2z"/></svg>
+          </div>
+          <b>macOS</b><small>Compatible with macOS 12+</small>
+          <a class="os-btn" href="https://ronnatech.com/?sdm_process_download=1&amp;download_id=3334">Download</a>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <section class="content-section" id="details">
-      <div class="section-image">
-        <img src="https://ronnatech.com/wp-content/uploads/2025/08/IMG_0361-bgr.png" alt="NiftyDrum connected">
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#top">NiftyDrum</a>
+        <p class="foot-tag">Designed for drummers, by drummers</p>
+        <p>Real-time MIDI &amp; sound triggering hardware, built open — from stage to workbench.</p>
+        <div class="socials">
+          <a href="https://www.youtube.com/@RonnaTech" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg viewBox="0 0 24 24"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg>
+          </a>
+          <a href="https://x.com/RonnaTech" target="_blank" rel="noopener" aria-label="X (Twitter)">
+            <svg viewBox="0 0 24 24"><path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.41l-5.8-7.58-6.64 7.58H.47l8.6-9.83L0 1.15h7.59l5.24 6.93 6.07-6.93zm-1.29 19.5h2.04L6.49 3.24H4.3l13.31 17.41z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/company/ronnatech" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.72v20.55C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.72C24 .77 23.2 0 22.22 0z"/></svg>
+          </a>
+          <a href="https://github.com/RonnaTechnologies" target="_blank" rel="noopener" aria-label="GitHub">
+            <svg viewBox="0 0 24 24"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.35.96.1-.75.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.18-1.49 3.14-1.18 3.14-1.18.63 1.59.24 2.76.12 3.05.73.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.26 5.66.41.36.78 1.05.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.67.8.56A10.52 10.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+          </a>
+        </div>
       </div>
-      <div class="section-content">
-        <h2>How It Works</h2>
-        <p>NiftyDrum delivers high-level MIDI performance in 4 easy steps:</p>
+      <div>
+        <h5>Platform</h5>
         <ul>
-          <li>Connect up to 9 piezos and 1 FSR to the terminal blocks</li>
-          <li>Plug into your DAW or drum module via USB</li>
-          <li>Use our GUI for trigger parameters, mapping and velocity shaping</li>
-          <li>Play — notes stream out instantly with zero perceivable latency</li>
+          <li><a href="#features">Core Capabilities</a></li>
+          <li><a href="#plus">NiftyDrum+</a></li>
+          <li><a href="#sdk">SDKs</a></li>
+          <li><a href="#specs">Specifications</a></li>
+          <li><a href="https://doc.niftydrum.com/" target="_blank" rel="noopener">Documentation</a></li>
         </ul>
       </div>
-    </section>
-
-    <section class="software" id="software">
-      <div class="software-content">
-        <h2 class="section-title">Software</h2>
-        <div class="webapp" id="webapp-button">
-          <a href="https://app.niftydrum.com" class="btn btn-primary">Use the app in your Browser</a>
-        </div>
-        <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 800px; margin: 0 auto 3rem;">Get the official
-          NiftyDrum configuration software for your operating system. Configure your triggers, map MIDI notes, and
-          fine-tune velocity curves with our intuitive interface.</p>
-        <div class="download-cards">
-          <div class="download-card windows">
-            <div class="download-card-icon">
-              <i class="fab fa-windows"></i>
-            </div>
-            <h3>Windows</h3>
-            <p>Compatible with Windows 10, and 11</p>
-            <a href="#" class="download-link" id="windowsDownload">Download for Windows</a>
-          </div>
-          <div class="download-card linux">
-            <div class="download-card-icon">
-              <i class="fab fa-linux"></i>
-            </div>
-            <h3>Linux</h3>
-            <p>Compatible with Ubuntu 22.04+, Debian</p>
-            <a href="#" class="download-link" id="linuxDownload">Download for Linux</a>
-          </div>
-          <div class="download-card mac">
-            <div class="download-card-icon">
-              <i class="fab fa-apple"></i>
-            </div>
-            <h3>macOS</h3>
-            <p>Compatible with macOS 12+.</p>
-            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3334" class="download-link">Download for
-              macOS</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="specs" id="specs">
-      <h2 class="section-title">Technical Specifications</h2>
-      <div class="specs-grid">
-        <div class="spec-card">
-          <h3><i class="fas fa-microchip"></i> Hardware</h3>
-          <ul>
-            <li><span>Inputs</span> <span>9 Piezo + 1 FSR</span></li>
-            <li><span>Connectors</span> <span>Terminal blocks</span></li>
-            <li><span>USB</span> <span>USB 2.0 Type-C</span></li>
-            <li><span>Power</span> <span>USB Powered</span></li>
-            <li><span>Dimensions</span> <span>65x56.5mm</span></li>
-          </ul>
-        </div>
-        <div class="spec-card">
-          <h3><i class="fas fa-tachometer-alt"></i> Performance</h3>
-          <ul>
-            <li><span>Latency</span> <span>&lt;2.5ms</span></li>
-            <li><span>Sample Rate</span> <span>&gt;10kHz</span></li>
-            <li><span>Velocity Sensitivity</span> <span>127 Levels</span></li>
-          </ul>
-        </div>
-        <div class="spec-card">
-          <h3><i class="fas fa-cogs"></i> Software</h3>
-          <ul>
-            <li><span>Compatibility</span> <span>Windows, Mac, Linux</span></li>
-            <li><span>User Interface</span> <span>Web-based GUI</span></li>
-            <li><span>Firmware</span> <span>USB Updates</span></li>
-            <li><span>MIDI Messages</span> <span>Notes, CC</span></li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <footer id="support">
-      <div class="social-links">
-        <a href="https://github.com/RonnaTechnologies" target="_blank"><i class="fab fa-github"></i></a>
-        <a href="https://www.youtube.com/@RonnaTech" target="_blank"><i class="fab fa-youtube"></i></a>
-        <a href="https://x.com/RonnaTech" target="_blank"><i class="fab fa-twitter"></i></a>
-        <a href="https://www.linkedin.com/company/ronnatech/" target="_blank"><i class="fab fa-linkedin"></i></a>
-      </div>
-      <p>&copy; 2026 NiftyDrum by Ronna Technologies</p>
-      <p>Designed for drummers, by drummers</p>
-      <p>Support & Community: <a href="https://ronnatech.com/forum/forum/niftydrum/" target="_blank">Visit our Forum</a>
-      </p>
-    </footer>
-
-    <!-- Windows Download Modal -->
-    <div id="windowsModal" class="modal">
-      <div class="modal-content">
-        <span class="close windows-close">&times;</span>
-        <h2 class="modal-title"><i class="fab fa-windows"></i> Windows Downloads</h2>
-
-        <div class="modal-info">
-          <p><i class="fas fa-info-circle"></i> <strong>Important:</strong> To run the NiftyDrum software on Windows,
-            you need to install the Microsoft Visual C++ Redistributable package.</p>
-          <p>Download and install the latest version from Microsoft:</p>
-          <p><a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank">Download Visual C++
-              Redistributable (x64)</a></p>
-        </div>
-        <ul class="modal-links">
-          <li class="modal-link-item">
-            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3330" target="_blank"
-              class="modal-link-content">
-              <div class="modal-link-icon">
-                <i class="fab fa-windows"></i>
-              </div>
-              <span class="modal-link-text">Download</span>
-              <i class="fas fa-arrow-right modal-link-arrow"></i>
-            </a>
-          </li>
+      <div>
+        <h5>Support &amp; Community</h5>
+        <ul>
+          <li><a href="https://ronnatech.com/forum/forum/niftydrum/" target="_blank" rel="noopener">Visit our Forum</a></li>
+          <li><a href="https://app.niftydrum.com" target="_blank" rel="noopener">Web Configurator</a></li>
+          <li><a href="https://github.com/RonnaTechnologies/artekit_stm32f401-core" target="_blank" rel="noopener">GitHub</a></li>
         </ul>
       </div>
     </div>
-
-    <!-- Linux Download Modal -->
-    <div id="linuxModal" class="modal">
-      <div class="modal-content">
-        <span class="close linux-close">&times;</span>
-        <h2 class="modal-title"><i class="fab fa-linux"></i> Linux Downloads</h2>
-
-        <div class="modal-info">
-          <p><i class="fas fa-info-circle"></i> <strong>Important:</strong> To ensure proper USB device access, you may
-            need to add your user to the dialout group. Run this command in your terminal:</p>
-          <p><code>sudo usermod -aG dialout $USER</code></p>
-          <p>Then log out and log back in for the changes to take effect.</p>
-        </div>
-
-        <ul class="modal-links">
-          <li class="modal-link-item">
-            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3336" target="_blank"
-              class="modal-link-content">
-              <div class="modal-link-icon">
-                <i class="fab fa-ubuntu"></i>
-              </div>
-              <span class="modal-link-text">Ubuntu 22.04</span>
-              <i class="fas fa-arrow-right modal-link-arrow"></i>
-            </a>
-          </li>
-          <li class="modal-link-item">
-            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3337" target="_blank"
-              class="modal-link-content">
-              <div class="modal-link-icon">
-                <i class="fab fa-ubuntu"></i>
-              </div>
-              <span class="modal-link-text">Ubuntu 24.04</span>
-              <i class="fas fa-arrow-right modal-link-arrow"></i>
-            </a>
-          </li>
-          <li class="modal-link-item">
-            <a href="https://ronnatech.com/?sdm_process_download=1&download_id=3335" target="_blank"
-              class="modal-link-content">
-              <div class="modal-link-icon debian-icon">
-                <img src="https://www.debian.org/logos/openlogo-nd.svg" height=24 width=24 alt="Debian Logo">
-              </div>
-              <span class="modal-link-text">Debian 13</span>
-              <i class="fas fa-arrow-right modal-link-arrow"></i>
-            </a>
-          </li>
-        </ul>
-      </div>
+    <div class="foot-bot">
+      <span>© 2026 NIFTYDRUM BY RONNA TECHNOLOGIES</span>
+      <span>SENSOR → MIDI → SOUND</span>
     </div>
+  </div>
+</footer>
 
-    <script>
-      const dl_button = document.getElementById("dl-button")
-      const has_serial = 'serial' in navigator
+<div class="modal" id="winModal" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+  <div class="modal-bk" data-close></div>
+  <div class="modal-card">
+    <button class="modal-x" data-close aria-label="Close">✕</button>
+    <h3 id="winTitle">Windows Downloads</h3>
+    <p class="warn"><b>Important:</b> To run the software, you need the Microsoft Visual C++ Redistributable package.</p>
+    <a class="btn ghost" style="width:100%;justify-content:center" href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank" rel="noopener">Download Visual C++ Redistributable (x64)</a>
+    <!--
+      FIX NEEDED: replace this placeholder with the real Windows installer URL.
+      Left as "#" intentionally rather than inventing a fake link — a dead "#"
+      is safer than a URL that looks real but 404s.
+    -->
+    <a class="btn solid" style="width:100%;justify-content:center" href="#" data-placeholder-link="true">Download Installer</a>
+  </div>
+</div>
 
-      if (has_serial)
-      {
-        dl_button.innerHTML = 'Try / Download Software'
-      }
-      else
-      {
-        document.getElementById('webapp-button').style.display = 'none'
-      }
-    </script>
-    <script>
-      // Smooth scrolling
-      document.querySelectorAll('a[href^="#"]').forEach(anchor =>
-      {
-        anchor.addEventListener('click', function (e)
-        {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target)
-          {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        });
-      });
+<div class="modal" id="linuxModal" role="dialog" aria-modal="true" aria-labelledby="linuxTitle">
+  <div class="modal-bk" data-close></div>
+  <div class="modal-card">
+    <button class="modal-x" data-close aria-label="Close">✕</button>
+    <h3 id="linuxTitle">Linux Downloads</h3>
+    <p class="warn"><b>Important:</b> For proper USB device access, add your user to the <b>dialout</b> group, then log out and back in.</p>
+    <div class="cmd"><code>sudo usermod -aG dialout $USER</code><button id="copyCmd" aria-label="Copy command to clipboard">COPY</button></div>
+    <!--
+      FIX NEEDED: replace these placeholders with the real per-distro package URLs.
+      Left as "#" intentionally rather than inventing fake links.
+    -->
+    <div class="distro">
+      <a href="#" data-placeholder-link="true">
+        <div class="distro-icon ubu">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="24" cy="24" r="13" fill="none" stroke="currentColor" stroke-width="6.5" stroke-dasharray="17.2 10.03"/>
+            <circle cx="22.19" cy="36.87" r="4.5" fill="currentColor"/>
+            <circle cx="13.76" cy="16.0" r="4.5" fill="currentColor"/>
+            <circle cx="36.05" cy="19.13" r="4.5" fill="currentColor"/>
+          </svg>
+        </div>
+        Ubuntu 22.04
+      </a>
+      <a href="#" data-placeholder-link="true">
+        <div class="distro-icon ubu">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="24" cy="24" r="13" fill="none" stroke="currentColor" stroke-width="6.5" stroke-dasharray="17.2 10.03"/>
+            <circle cx="22.19" cy="36.87" r="4.5" fill="currentColor"/>
+            <circle cx="13.76" cy="16.0" r="4.5" fill="currentColor"/>
+            <circle cx="36.05" cy="19.13" r="4.5" fill="currentColor"/>
+          </svg>
+        </div>
+        Ubuntu 24.04
+      </a>
+      <a href="#" data-placeholder-link="true">
+        <div class="distro-icon deb">
+          <img src="https://www.debian.org/logos/openlogo-nd.svg" alt="Debian swirl logo" loading="lazy">
+        </div>
+        Debian 13
+      </a>
+    </div>
+  </div>
+</div>
 
-      // Nav scroll effect
-      const nav = document.getElementById('nav');
-      window.addEventListener('scroll', () =>
-      {
-        if (window.scrollY > 100)
-        {
-          nav.classList.add('scrolled');
-        } else
-        {
-          nav.classList.remove('scrolled');
-        }
-      });
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script>
+(function(){
+"use strict";
 
-      // Intersection Observer for animations
-      const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px'
-      };
+/* ---------- lightweight toast for user-facing status messages ---------- */
+let toastTimer = null;
+function showToast(msg){
+  const t = document.getElementById("toast");
+  if(!t) return;
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2400);
+}
 
-      const observer = new IntersectionObserver((entries) =>
-      {
-        entries.forEach(entry =>
-        {
-          if (entry.isIntersecting)
-          {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-            observer.unobserve(entry.target);
-          }
-        });
-      }, observerOptions);
+/* ---------- nav / burger menu ---------- */
+const nav = document.getElementById("nav");
+const burger = document.getElementById("burger");
+const navLinks = document.getElementById("navLinks");
+burger.addEventListener("click", () => {
+  const isOpen = navLinks.classList.toggle("open");
+  burger.setAttribute("aria-expanded", String(isOpen));
+});
+navLinks.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
+  navLinks.classList.remove("open");
+  burger.setAttribute("aria-expanded", "false");
+}));
 
-      document.querySelectorAll('.feature, .spec-card, .download-card, .section-title').forEach(el =>
-      {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(60px)';
-        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-        observer.observe(el);
-      });
+/* ---------- placeholder links: warn instead of silently doing nothing ---------- */
+document.querySelectorAll('[data-placeholder-link="true"]').forEach(a => {
+  a.addEventListener("click", (e) => {
+    e.preventDefault();
+    showToast("This download link isn't set up yet.");
+  });
+});
 
-      // Separate observer for content sections with staggered children
-      document.querySelectorAll('.content-section').forEach(section =>
-      {
-        const children = section.querySelectorAll('.section-content, .section-image');
-        children.forEach((child, index) =>
-        {
-          child.style.opacity = '0';
-          child.style.transform = 'translateY(60px)';
-          child.style.transition = `opacity 0.8s ease ${index * 0.2}s, transform 0.8s ease ${index * 0.2}s`;
-        });
+/* ---------- steps progress ---------- */
+const stepsEl = document.getElementById("steps");
+const stepsFill = document.getElementById("stepsFill");
+function stepsProgress(){
+  if(!stepsEl) return;
+  const r = stepsEl.getBoundingClientRect();
+  const p = Math.min(1, Math.max(0, (window.innerHeight * .72 - r.top) / r.height));
+  stepsFill.style.height = (p * 100) + "%";
+  stepsEl.querySelectorAll(".step").forEach(s => {
+    s.classList.toggle("on", s.getBoundingClientRect().top < window.innerHeight * .72);
+  });
+}
 
-        const sectionObserver = new IntersectionObserver((entries) =>
-        {
-          entries.forEach(entry =>
-          {
-            if (entry.isIntersecting)
-            {
-              children.forEach(child =>
-              {
-                child.style.opacity = '1';
-                child.style.transform = 'translateY(0)';
-              });
-              sectionObserver.unobserve(entry.target);
-            }
-          });
-        }, observerOptions);
+/* ---------- nav scroll-spy ---------- */
+const spyIds = ["features","how","plus","sdk","specs","software"];
+const spyLinks = Array.from(document.querySelectorAll(".nav-links a"));
+function scrollSpy(){
+  let cur = null;
+  for(const id of spyIds){
+    const el = document.getElementById(id);
+    if(el && el.getBoundingClientRect().top <= 140) cur = id;
+  }
+  spyLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + cur));
+}
 
-        sectionObserver.observe(section);
-      });
+function onScroll(){
+  nav.classList.toggle("scrolled", window.scrollY > 10);
+  stepsProgress();
+  scrollSpy();
+}
+window.addEventListener("scroll", onScroll, {passive:true});
 
+/* ---------- reveal on scroll, with a fallback if IntersectionObserver is unavailable ---------- */
+if ("IntersectionObserver" in window){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }});
+  },{threshold:.16});
+  document.querySelectorAll(".rv").forEach(el => io.observe(el));
+} else {
+  // No IntersectionObserver support: reveal everything immediately
+  // rather than leaving content stuck at opacity:0 forever.
+  document.querySelectorAll(".rv").forEach(el => el.classList.add("in"));
+}
 
-      // Modal functionality
-      const windowsDownloadBtn = document.getElementById('windowsDownload');
-      const linuxDownloadBtn = document.getElementById('linuxDownload');
-      const windowsModal = document.getElementById('windowsModal');
-      const linuxModal = document.getElementById('linuxModal');
-      const windowsCloseBtn = document.querySelector('.windows-close');
-      const linuxCloseBtn = document.querySelector('.linux-close');
+/* ---------- modals ---------- */
+let lastFocusedEl = null;
 
-      windowsDownloadBtn.addEventListener('click', function (e)
-      {
-        e.preventDefault();
-        windowsModal.style.display = 'block';
-      });
+function getFocusable(container){
+  return Array.from(container.querySelectorAll(
+    'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+  )).filter(el => el.offsetParent !== null);
+}
 
-      linuxDownloadBtn.addEventListener('click', function (e)
-      {
-        e.preventDefault();
-        linuxModal.style.display = 'block';
-      });
+function trapFocus(e, modal){
+  if(e.key !== "Tab") return;
+  const focusable = getFocusable(modal);
+  if(focusable.length === 0) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if(e.shiftKey && document.activeElement === first){
+    e.preventDefault();
+    last.focus();
+  } else if(!e.shiftKey && document.activeElement === last){
+    e.preventDefault();
+    first.focus();
+  }
+}
 
-      windowsCloseBtn.addEventListener('click', function ()
-      {
-        windowsModal.style.display = 'none';
-      });
+function openModal(id, triggerEl){
+  const m = document.getElementById(id);
+  if(!m) return;
+  lastFocusedEl = triggerEl || document.activeElement;
+  m.classList.add("open");
+  document.body.style.overflow = "hidden";
+  const card = m.querySelector(".modal-card");
+  const x = m.querySelector(".modal-x");
+  if(x) x.focus();
 
-      linuxCloseBtn.addEventListener('click', function ()
-      {
-        linuxModal.style.display = 'none';
-      });
+  function onKeydown(e){
+    if(e.key === "Escape"){ closeModal(m); }
+    else { trapFocus(e, card); }
+  }
+  m._onKeydown = onKeydown;
+  document.addEventListener("keydown", onKeydown);
+}
 
-      window.addEventListener('click', function (e)
-      {
-        if (e.target === windowsModal)
-        {
-          windowsModal.style.display = 'none';
-        }
-        if (e.target === linuxModal)
-        {
-          linuxModal.style.display = 'none';
-        }
-      });
-    </script>
-  </body>
+function closeModal(m){
+  m.classList.remove("open");
+  document.body.style.overflow = "";
+  if(m._onKeydown){
+    document.removeEventListener("keydown", m._onKeydown);
+    m._onKeydown = null;
+  }
+  if(lastFocusedEl && typeof lastFocusedEl.focus === "function"){
+    lastFocusedEl.focus();
+  }
+}
 
+document.querySelectorAll("[data-modal]").forEach(b => b.addEventListener("click", () => openModal(b.dataset.modal, b)));
+document.querySelectorAll(".modal").forEach(m => {
+  m.querySelectorAll("[data-close]").forEach(c => c.addEventListener("click", () => closeModal(m)));
+});
+
+/* ---------- copy dialout command (with real success/failure feedback) ---------- */
+const copyBtn = document.getElementById("copyCmd");
+const COMMAND_TEXT = "sudo usermod -aG dialout $USER";
+
+function legacyCopy(text){
+  const ta = document.createElement("textarea");
+  ta.value = text;
+  ta.setAttribute("readonly", "");
+  ta.style.position = "fixed";
+  ta.style.opacity = "0";
+  document.body.appendChild(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+  document.body.removeChild(ta);
+  return ok;
+}
+
+if (copyBtn) copyBtn.addEventListener("click", async () => {
+  let ok = false;
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(COMMAND_TEXT);
+      ok = true;
+    } else {
+      ok = legacyCopy(COMMAND_TEXT);
+    }
+  } catch (err) {
+    ok = legacyCopy(COMMAND_TEXT);
+  }
+
+  if (ok) {
+    copyBtn.textContent = "COPIED ✓";
+    showToast("Command copied to clipboard.");
+  } else {
+    copyBtn.textContent = "COPY FAILED";
+    showToast("Couldn't copy automatically — please select and copy the command manually.");
+  }
+  setTimeout(() => { copyBtn.textContent = "COPY"; }, 1800);
+});
+
+onScroll();
+})();
+</script>
+</body>
 </html>
