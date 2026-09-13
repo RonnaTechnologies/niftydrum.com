@@ -6,30 +6,38 @@
 <meta name="color-scheme" content="light dark">
 <meta name="description" content="NiftyDrum: real-time MIDI &amp; sound trigger platform. Connect 9 piezos + 1 FSR, get &lt;2.5ms MIDI over USB, and build custom instruments with open Arduino SDKs. NiftyDrum+ adds a &lt;10ms sound engine.">
 <title>NiftyDrum – Real-time MIDI &amp; Sound Trigger Platform</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231e6bf1'/%3E%3Ccircle cx='32' cy='32' r='8' fill='white'/%3E%3Cpath d='M44 20a17 17 0 0 1 0 24M20 44a17 17 0 0 1 0-24' stroke='white' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230010ff'/%3E%3Ccircle cx='32' cy='32' r='8' fill='white'/%3E%3Cpath d='M44 20a17 17 0 0 1 0 24M20 44a17 17 0 0 1 0-24' stroke='white' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ============ LOCAL FONT ============ */
+@font-face{
+  font-family:'Source Sans Pro';
+  src:url('SourceSansPro.ttf') format('truetype');
+  font-weight:100 900;
+  font-style:normal;
+  font-display:swap;
+}
 /* ============ TOKENS — LIGHT (default) ============ */
 :root{
   color-scheme:light;
   --bg:#f6f8fd; --card:#ffffff; --ink:#0d1b36; --mut:#5c6b85; --dim:#8d9ab2;
   --line:#e4ebf6; --line2:#d3def0;
-  --blue:#1e6bf1; --blue-d:#0c47b8; --blue-t:#eaf1fe; --blue-t2:#f2f7ff; --cyan:#2fb6e8; --cyan-t:rgba(47,182,232,.13);
-  --band:rgba(30,107,241,.05);
+  --blue:#0010ff; --blue-d:#000ba3; --blue-t:#e7e9ff; --blue-t2:#f3f4ff; --cyan:#5468ff; --cyan-t:rgba(84,104,255,.13);
+  --band:rgba(0,16,255,.05);
   --navy:#0b1b33;
-  --glow:rgba(30,107,241,.10); --glow-strong:rgba(30,107,241,.16);
+  --glow:rgba(0,16,255,.10); --glow-strong:rgba(0,16,255,.16);
   --nav-bg:rgba(255,255,255,.86); --nav-bg-solid:#ffffff;
-  --btn-solid:#1e6bf1; --btn-solid-h:#0c47b8; --btn-glow:rgba(30,107,241,.5);
-  --hl-border:#dbe7fb;
+  --btn-solid:#0010ff; --btn-solid-h:#000ba3; --btn-glow:rgba(0,16,255,.5);
+  --hl-border:#dcdfff;
   --dot-bg:#ffffff; --dot-on:#ffffff;
-  --tag-color:#0c47b8; --emph:#0c47b8; --link-strong:#0c47b8;
+  --tag-color:#000ba3; --emph:#000ba3; --link-strong:#000ba3;
   --modal-bk:rgba(13,27,54,.45); --modal-sh:0 40px 90px -30px rgba(13,42,92,.4);
-  --cmd-bg:#f2f7ff;
+  --cmd-bg:#f3f4ff;
   --board-shadow:rgba(13,42,92,.18);
   --social-on:#ffffff;
-  --icon-grad-start:#1e6bf1; --icon-grad-end:#2fb6e8;
+  --icon-grad-start:#0010ff; --icon-grad-end:#5468ff;
   --r:18px; --r-s:12px;
   --sh:0 24px 50px -24px rgba(13,42,92,.18);
   --sans:'Source Sans Pro','Source Sans 3',sans-serif;
@@ -42,20 +50,20 @@
     color-scheme:dark;
     --bg:#0a1120; --card:#101b2e; --ink:#e8f0fb; --mut:#9db1c9; --dim:#6d82a0;
     --line:rgba(148,184,255,.14); --line2:rgba(148,184,255,.26);
-    --blue:#4d9fff; --blue-d:#2f7fe0; --blue-t:rgba(77,159,255,.14); --blue-t2:rgba(77,159,255,.07); --cyan:#39d0e8; --cyan-t:rgba(57,208,232,.14);
-    --band:rgba(77,159,255,.05);
+    --blue:#6478ff; --blue-d:#3d55e8; --blue-t:rgba(100,120,255,.14); --blue-t2:rgba(100,120,255,.07); --cyan:#8a97ff; --cyan-t:rgba(138,151,255,.14);
+    --band:rgba(61,85,232,.05);
     --navy:#060b14;
-    --glow:rgba(47,127,224,.16); --glow-strong:rgba(47,127,224,.22);
+    --glow:rgba(61,85,232,.16); --glow-strong:rgba(61,85,232,.22);
     --nav-bg:rgba(10,17,32,.86); --nav-bg-solid:#0d1526;
-    --btn-solid:#2f7fe0; --btn-solid-h:#4d9fff; --btn-glow:rgba(47,127,224,.65);
-    --hl-border:rgba(77,159,255,.28);
+    --btn-solid:#3d55e8; --btn-solid-h:#6478ff; --btn-glow:rgba(61,85,232,.65);
+    --hl-border:rgba(100,120,255,.28);
     --dot-bg:#0d1526; --dot-on:#081426;
-    --tag-color:#9ecbff; --emph:#9ecbff; --link-strong:#9ecbff;
+    --tag-color:#a7b0ff; --emph:#a7b0ff; --link-strong:#a7b0ff;
     --modal-bk:rgba(4,8,16,.72); --modal-sh:0 40px 90px -30px rgba(0,0,0,.7);
     --cmd-bg:#0a1120;
     --board-shadow:rgba(0,0,0,.45);
     --social-on:#081426;
-    --icon-grad-start:#4d9fff; --icon-grad-end:#39d0e8;
+    --icon-grad-start:#3d55e8; --icon-grad-end:#8a97ff;
     --sh:0 24px 50px -24px rgba(0,0,0,.65);
   }
 }
@@ -78,7 +86,7 @@ section[id]{scroll-margin-top:88px}
 /* reveals */
 .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
 .rv.in{opacity:1;transform:none}
-.ml{display:block;overflow:hidden}
+.ml{display:block;overflow:hidden;padding-bottom:.2em;margin-bottom:-.2em}
 .ml>span{display:block;transform:translateY(110%);transition:transform .8s cubic-bezier(.2,.75,.15,1)}
 .in .ml>span{transform:none}
 .in .ml:nth-child(2)>span{transition-delay:.08s}
@@ -88,9 +96,18 @@ section[id]{scroll-margin-top:88px}
 .nav{position:fixed;top:0;left:0;right:0;z-index:90;transition:background .3s,box-shadow .3s}
 .nav.scrolled{background:var(--nav-bg);backdrop-filter:blur(14px);box-shadow:0 1px 0 var(--line)}
 .nav-in{display:flex;align-items:center;justify-content:space-between;height:74px}
-.logo{font-family:'Source Sans Pro','Source Sans 3',sans-serif;font-weight:700;font-size:1.55rem;letter-spacing:-.01em;color:var(--ink);
+.logo{font-family:'Source Sans Pro','Source Sans 3',sans-serif;font-weight:700;font-size:1.55rem;letter-spacing:-.01em;
+  color:var(--ink);
   font-variant-ligatures:common-ligatures discretionary-ligatures;
   -webkit-font-feature-settings:"liga" 1,"dlig" 1;font-feature-settings:"liga" 1,"dlig" 1}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .logo{
+    background-image:linear-gradient(90deg,var(--blue) 0%,var(--blue) 40%,var(--ink) 100%);
+    -webkit-background-clip:text;background-clip:text;
+    color:transparent;-webkit-text-fill-color:transparent;
+  }
+  footer .logo{background-image:linear-gradient(90deg,var(--blue) 0%,var(--blue) 40%,#ffffff 100%)}
+}
 .nav-links{display:flex;align-items:center;gap:32px;font-size:.95rem;font-weight:400}
 .nav-links a{color:var(--mut);transition:color .25s;position:relative}
 .nav-links a::after{content:"";position:absolute;left:0;right:100%;bottom:-5px;height:2px;border-radius:2px;
@@ -101,8 +118,18 @@ section[id]{scroll-margin-top:88px}
 .nav-cta{font-size:.9rem;font-weight:600;background:var(--btn-solid);color:#fff;padding:10px 20px;border-radius:999px;
   box-shadow:0 8px 18px -8px var(--btn-glow);transition:background .25s,transform .25s}
 .nav-cta:hover{background:var(--btn-solid-h);transform:translateY(-1px)}
-.burger{display:none;background:var(--blue-t);border:1px solid var(--line);color:var(--tag-color);
-  font-size:.72rem;letter-spacing:.12em;font-weight:600;padding:9px 16px;border-radius:999px;cursor:pointer}
+
+/* ============ BURGER ============ */
+.burger{display:none;align-items:center;justify-content:center;flex-direction:column;gap:5px;
+  width:46px;height:46px;padding:0;border-radius:12px;
+  background:var(--blue-t);border:1px solid var(--line);cursor:pointer;
+  transition:background .25s,border-color .25s}
+.burger:hover{border-color:var(--blue)}
+.burger span{display:block;width:20px;height:2px;border-radius:2px;background:var(--tag-color);
+  transition:transform .3s cubic-bezier(.2,.7,.2,1),opacity .2s ease}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0;transform:scaleX(.4)}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
 /* ============ BUTTONS ============ */
 .btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:600;font-size:1rem;
@@ -131,7 +158,7 @@ h1 .acc{color:var(--blue)}
   background:radial-gradient(closest-side,var(--glow-strong),transparent 70%)}
 .hv-ring{position:absolute;border:1px solid var(--hl-border);border-radius:50%;animation:ringPulse 5s ease-in-out infinite}
 .hv-ring.r1{width:340px;height:340px}
-.hv-ring.r2{width:440px;height:440px;animation-delay:1.4s;border-color:rgba(57,208,232,.22)}
+.hv-ring.r2{width:440px;height:440px;animation-delay:1.4s;border-color:rgba(84,104,255,.22)}
 @keyframes ringPulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.045);opacity:1}}
 .hv-card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--sh);
   padding:34px;width:min(380px,100%)}
@@ -295,7 +322,6 @@ h1 .acc{color:var(--blue)}
 /* ============ FOOTER ============ */
 footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-top:60px;border-top:1px solid var(--line)}
 .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;padding:76px 0 54px}
-footer .logo{color:#fff}
 .foot-tag{font-family:var(--mono);font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;color:#6fa8ff;margin-top:14px}
 .foot-grid p{color:#8fa0bd;font-size:.92rem;max-width:34ch;margin-top:10px}
 .foot-grid h5{font-family:var(--mono);font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:#7286a6;margin-bottom:22px}
@@ -343,7 +369,7 @@ footer .logo{color:#fff}
 .distro a .distro-icon svg{width:17px;height:17px;color:#fff}
 .distro a .distro-icon.deb img{width:16px;height:16px;object-fit:contain}
 
-/* ============ TOAST (status messages) ============ */
+/* ============ TOAST ============ */
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(12px);z-index:200;
   background:var(--ink);color:var(--bg);font-size:.85rem;font-weight:600;padding:12px 20px;border-radius:12px;
   box-shadow:var(--sh);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
@@ -362,7 +388,7 @@ footer .logo{color:#fff}
     flex-direction:column;align-items:flex-start;padding:26px 6%;gap:20px;border-bottom:1px solid var(--line)}
   .nav-links.open{display:flex}
   .nav-links a::after{display:none}
-  .burger{display:block}
+  .burger{display:flex}
   .nav-cta{display:none}
   .feat-list,.plus-stats{grid-template-columns:1fr}
   .sec{padding:84px 0}
@@ -393,7 +419,9 @@ footer .logo{color:#fff}
       <a href="#software">Software</a>
     </nav>
     <a class="nav-cta" href="https://app.niftydrum.com" target="_blank" rel="noopener">Web App</a>
-    <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">MENU</button>
+    <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
 
@@ -555,9 +583,7 @@ footer .logo{color:#fff}
         <div class="sdk-head">
           <span class="sdk-chip">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="3.4"/>
-              <path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"/>
-              <path d="M6.5 6.5l2.1 2.1M15.4 15.4l2.1 2.1M6.5 17.5l2.1-2.1M15.4 8.6l2.1-2.1"/>
+              <path d="M2 13h3.2l1.8-5 3 10 2.4-13 2.6 11 1.6-3H21"/>
             </svg>
           </span>
           Sensor SDK · STM32F1
@@ -578,7 +604,9 @@ footer .logo{color:#fff}
         <div class="sdk-head">
           <span class="sdk-chip">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 10v4M8 6.5v11M12 3.5v17M16 6.5v11M20 10v4"/>
+              <path d="M10.5 5 6 9H3v6h3l4.5 4z"/>
+              <path d="M15 8.5a5 5 0 0 1 0 7"/>
+              <path d="M18 5.5a9.5 9.5 0 0 1 0 13"/>
             </svg>
           </span>
           Sound SDK · STM32F401
@@ -732,11 +760,7 @@ footer .logo{color:#fff}
     <h3 id="winTitle">Windows Downloads</h3>
     <p class="warn"><b>Important:</b> To run the software, you need the Microsoft Visual C++ Redistributable package.</p>
     <a class="btn ghost" style="width:100%;justify-content:center" href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank" rel="noopener">Download Visual C++ Redistributable (x64)</a>
-    <!--
-      FIX NEEDED: replace this placeholder with the real Windows installer URL.
-      Left as "#" intentionally rather than inventing a fake link — a dead "#"
-      is safer than a URL that looks real but 404s.
-    -->
+    <!-- FIX NEEDED: replace with real Windows installer URL -->
     <a class="btn solid" style="width:100%;justify-content:center" href="#" data-placeholder-link="true">Download Installer</a>
   </div>
 </div>
@@ -748,10 +772,7 @@ footer .logo{color:#fff}
     <h3 id="linuxTitle">Linux Downloads</h3>
     <p class="warn"><b>Important:</b> For proper USB device access, add your user to the <b>dialout</b> group, then log out and back in.</p>
     <div class="cmd"><code>sudo usermod -aG dialout $USER</code><button id="copyCmd" aria-label="Copy command to clipboard">COPY</button></div>
-    <!--
-      FIX NEEDED: replace these placeholders with the real per-distro package URLs.
-      Left as "#" intentionally rather than inventing fake links.
-    -->
+    <!-- FIX NEEDED: replace placeholders with real per-distro package URLs -->
     <div class="distro">
       <a href="#" data-placeholder-link="true">
         <div class="distro-icon ubu">
@@ -791,7 +812,7 @@ footer .logo{color:#fff}
 (function(){
 "use strict";
 
-/* ---------- lightweight toast for user-facing status messages ---------- */
+/* ---------- toast ---------- */
 let toastTimer = null;
 function showToast(msg){
   const t = document.getElementById("toast");
@@ -808,14 +829,16 @@ const burger = document.getElementById("burger");
 const navLinks = document.getElementById("navLinks");
 burger.addEventListener("click", () => {
   const isOpen = navLinks.classList.toggle("open");
+  burger.classList.toggle("open", isOpen);
   burger.setAttribute("aria-expanded", String(isOpen));
 });
 navLinks.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
   navLinks.classList.remove("open");
+  burger.classList.remove("open");
   burger.setAttribute("aria-expanded", "false");
 }));
 
-/* ---------- placeholder links: warn instead of silently doing nothing ---------- */
+/* ---------- placeholder links ---------- */
 document.querySelectorAll('[data-placeholder-link="true"]').forEach(a => {
   a.addEventListener("click", (e) => {
     e.preventDefault();
@@ -836,7 +859,7 @@ function stepsProgress(){
   });
 }
 
-/* ---------- nav scroll-spy ---------- */
+/* ---------- scroll-spy ---------- */
 const spyIds = ["features","how","plus","sdk","specs","software"];
 const spyLinks = Array.from(document.querySelectorAll(".nav-links a"));
 function scrollSpy(){
@@ -855,15 +878,13 @@ function onScroll(){
 }
 window.addEventListener("scroll", onScroll, {passive:true});
 
-/* ---------- reveal on scroll, with a fallback if IntersectionObserver is unavailable ---------- */
+/* ---------- reveal on scroll ---------- */
 if ("IntersectionObserver" in window){
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); }});
   },{threshold:.16});
   document.querySelectorAll(".rv").forEach(el => io.observe(el));
 } else {
-  // No IntersectionObserver support: reveal everything immediately
-  // rather than leaving content stuck at opacity:0 forever.
   document.querySelectorAll(".rv").forEach(el => el.classList.add("in"));
 }
 
@@ -926,7 +947,7 @@ document.querySelectorAll(".modal").forEach(m => {
   m.querySelectorAll("[data-close]").forEach(c => c.addEventListener("click", () => closeModal(m)));
 });
 
-/* ---------- copy dialout command (with real success/failure feedback) ---------- */
+/* ---------- copy command ---------- */
 const copyBtn = document.getElementById("copyCmd");
 const COMMAND_TEXT = "sudo usermod -aG dialout $USER";
 
