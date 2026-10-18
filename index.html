@@ -19,7 +19,7 @@
   font-style:normal;
   font-display:swap;
 }
-/* ============ TOKENS — LIGHT (default) ============ */
+/* ============ TOKENS: LIGHT (default) ============ */
 :root{
   color-scheme:light;
   --bg:#f6f8fd; --card:#ffffff; --ink:#0d1b36; --mut:#5c6b85; --dim:#8d9ab2;
@@ -44,7 +44,7 @@
   --disp:var(--sans); --body:var(--sans); --logo:var(--sans);
   --mono:'IBM Plex Mono',monospace;
 }
-/* ============ TOKENS — DARK (system preference) ============ */
+/* ============ TOKENS: DARK (system preference) ============ */
 @media (prefers-color-scheme: dark){
   :root{
     color-scheme:dark;
@@ -429,9 +429,9 @@ footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-t
   <div class="container hero-grid">
     <div class="rv in">
       <h1>
-        <span class="ml"><span>The ultimate</span></span>
+        <span class="ml"><span>Maker-friendly</span></span>
         <span class="ml"><span><span class="acc">MIDI &amp; sound</span></span></span>
-        <span class="ml"><span>trigger.</span></span>
+        <span class="ml"><span>trigger</span></span>
       </h1>
       <p class="hero-sub">From ultra-low latency MIDI drum modules to custom instruments. Connect up to
         <strong>9 piezos + 1 FSR</strong>, and build anything with our SDKs.</p>
@@ -464,7 +464,7 @@ footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-t
   <div class="container">
     <header class="shead rv">
       <p class="s-kicker">Core Capabilities</p>
-      <h2 class="s-title">Hardware for musicians and makers.</h2>
+      <h2 class="s-title">Hardware for musicians and makers</h2>
     </header>
     <div class="feat-grid">
       <article class="f-card rv">
@@ -513,11 +513,11 @@ footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-t
   <div class="container how-wrap">
     <div class="how-sticky rv">
       <p class="s-kicker">How It Works</p>
-      <h2 class="s-title">From pad to MIDI in 5 steps.</h2>
-      <p>NiftyDrum delivers a complete path from piezo hit to sound — wire it, map it, play it.</p>
+      <h2 class="s-title">From pad to MIDI</h2>
+      <p>NiftyDrum delivers a complete path from piezo hit to sound: wire it, map it, play it.</p>
       <figure class="how-img">
         <img src="https://ronnatech.com/wp-content/uploads/2025/08/IMG_0361-bgr.png" alt="NiftyDrum trigger-to-MIDI board" loading="lazy">
-        <figcaption>NiftyDrum — trigger-to-MIDI module</figcaption>
+        <figcaption>NiftyDrum: trigger-to-MIDI module</figcaption>
       </figure>
     </div>
     <div class="steps" id="steps">
@@ -556,10 +556,10 @@ footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-t
         </div>
 
         <div class="feat-list">
-          <div class="feat"><span class="tick">✓</span><div><b>All-in-One</b><span>Sensors + sound generation on a single board.</span></div></div>
           <div class="feat"><span class="tick">✓</span><div><b>Ultra-Low Latency</b><span>Total system latency (sensor to audio) is &lt;10ms.</span></div></div>
           <div class="feat"><span class="tick">✓</span><div><b>High Audio Quality</b><span>Wav samples with 44.1kHz or 48kHz sample rate.</span></div></div>
           <div class="feat"><span class="tick">✓</span><div><b>Velocity Layers</b><span>Supported up to any number of layers.</span></div></div>
+          <div class="feat"><span class="tick">✓</span><div><b>All-in-One</b><span>Sensors + sound generation on a single board.</span></div></div>
           <div class="feat"><span class="tick">✓</span><div><b>Ready to Play</b><span>Comes with a pre-installed drum module firmware.</span></div></div>
         </div>
       </div>
@@ -574,7 +574,7 @@ footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-t
   <div class="container">
     <header class="shead rv">
       <p class="s-kicker">More Than Just Drums</p>
-      <h2 class="s-title">A blank canvas for makers.</h2>
+      <h2 class="s-title">A blank canvas for makers</h2>
       <p class="s-sub">Thanks to our open, Arduino-compatible SDKs, NiftyDrum+ lets you create a custom drum module, interactive music boxes, or entirely new instruments.</p>
     </header>
 
@@ -596,7 +596,7 @@ footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-t
             <div class="sdk-feat"><div><b>Native USB MIDI</b><br><span>Stream MIDI over USB at full speed.</span></div></div>
             <div class="sdk-feat"><div><b>Stable ARM Toolchain</b><br><span>ARM None-EABI (gcc-arm-none-eabi).</span></div></div>
           </div>
-          <div class="sdk-foot"><a class="btn ghost" href="https://ronnatech.com/sdm_downloads/arduino_stm32/" target="_blank" rel="noopener">Read Documentation</a></div>
+          <div class="sdk-foot"><a class="btn ghost" href="https://doc.niftydrum.com/4.sensor_sdk" target="_blank" rel="noopener">Read Documentation</a></div>
         </div>
       </article>
 
@@ -619,7 +619,7 @@ footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-t
             <div class="sdk-feat"><div><b>STM32F401 Core</b><br><span>MIDI in, digital and analog inputs.</span></div></div>
             <div class="sdk-feat"><div><b>Arduino IDE Ready</b><br><span>Install via Artekit Board Manager URL.</span></div></div>
           </div>
-          <div class="sdk-foot"><a class="btn ghost" href="https://github.com/RonnaTechnologies/artekit_stm32f401-core" target="_blank" rel="noopener">View on GitHub</a></div>
+          <div class="sdk-foot"><a class="btn ghost" href="https://doc.niftydrum.com/5.sound_sdk/" target="_blank" rel="noopener">Read Documentation</a></div>
         </div>
       </article>
     </div>
@@ -630,7 +630,7 @@ footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-t
   <div class="container">
     <header class="shead rv">
       <p class="s-kicker">Technical Specifications</p>
-      <h2 class="s-title">Specs at a glance.</h2>
+      <h2 class="s-title">Trigger and audio specs</h2>
     </header>
     <div class="specs-grid">
       <dl class="spec-col rv">
@@ -662,7 +662,7 @@ footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-t
   <div class="container">
     <header class="shead rv">
       <p class="s-kicker">Configuration Software</p>
-      <h2 class="s-title">Map notes. Shape velocity.</h2>
+      <h2 class="s-title">Map notes, shape velocity</h2>
     </header>
 
     <div class="soft-grid">
@@ -711,7 +711,7 @@ footer{background:var(--navy);color:#c6d2e6;position:relative;z-index:2;margin-t
       <div>
         <a class="logo" href="#top">NiftyDrum</a>
         <p class="foot-tag">Designed for drummers, by drummers</p>
-        <p>Real-time MIDI &amp; sound triggering hardware, built open — from stage to workbench.</p>
+        <p>Real-time MIDI &amp; sound triggering hardware, built open: from stage to workbench.</p>
         <div class="socials">
           <a href="https://www.youtube.com/@RonnaTech" target="_blank" rel="noopener" aria-label="YouTube">
             <svg viewBox="0 0 24 24"><path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.5A3.02 3.02 0 0 0 .5 6.19C0 8.07 0 12 0 12s0 3.93.5 5.81a3.02 3.02 0 0 0 2.12 2.14c1.88.5 9.38.5 9.38.5s7.5 0 9.38-.5a3.02 3.02 0 0 0 2.12-2.14C24 15.93 24 12 24 12s0-3.93-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z"/></svg>
@@ -983,7 +983,7 @@ if (copyBtn) copyBtn.addEventListener("click", async () => {
     showToast("Command copied to clipboard.");
   } else {
     copyBtn.textContent = "COPY FAILED";
-    showToast("Couldn't copy automatically — please select and copy the command manually.");
+    showToast("Couldn't copy automatically: please select and copy the command manually.");
   }
   setTimeout(() => { copyBtn.textContent = "COPY"; }, 1800);
 });
